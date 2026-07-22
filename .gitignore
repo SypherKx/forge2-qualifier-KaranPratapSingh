@@ -5,6 +5,7 @@
 
 # Playwright Recorder files
 node_modules/
+dist/
 record.js
 evidence/raw_videos/
 
