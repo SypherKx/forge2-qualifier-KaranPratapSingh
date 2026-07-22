@@ -266,52 +266,9 @@ class KanbanController extends Controller
         if (Board::count() == 0) {
             $board = Board::create(['name' => 'Project Alpha']);
 
-            $todo = BoardList::create(['board_id' => $board->id, 'name' => 'To Do', 'position' => 1]);
-            $doing = BoardList::create(['board_id' => $board->id, 'name' => 'In Progress', 'position' => 2]);
-            $done = BoardList::create(['board_id' => $board->id, 'name' => 'Done', 'position' => 3]);
-
-            $members = Member::all();
-            $tags = Tag::all();
-
-            $card1 = Card::create([
-                'board_list_id' => $todo->id,
-                'title' => 'Scaffold backend API',
-                'description' => 'Create Laravel API, migrations, controllers and routes for boards/lists/cards.',
-                'due_date' => now()->addDays(2),
-                'member_id' => $members[0]->id,
-                'position' => 1
-            ]);
-            $card1->tags()->sync([$tags[1]->id, $tags[3]->id]);
-
-            $card2 = Card::create([
-                'board_list_id' => $todo->id,
-                'title' => 'Integrate Slack channels',
-                'description' => 'Set up bot tokens and wire Hermes + OpenClaw into Slack channels.',
-                'due_date' => now()->addDays(1),
-                'member_id' => $members[1]->id,
-                'position' => 2
-            ]);
-            $card2->tags()->sync([$tags[3]->id]);
-
-            $card3 = Card::create([
-                'board_list_id' => $doing->id,
-                'title' => 'Build React dashboard UI',
-                'description' => 'Develop responsive board layouts, swimlanes, and interactive modals in React.',
-                'due_date' => now()->addHours(6),
-                'member_id' => $members[2]->id,
-                'position' => 1
-            ]);
-            $card3->tags()->sync([$tags[2]->id]);
-
-            $card4 = Card::create([
-                'board_list_id' => $done->id,
-                'title' => 'Setup project repo',
-                'description' => 'Initialize Git repository, configure .gitignore, and prepare basic structure.',
-                'due_date' => now()->subDays(1),
-                'member_id' => $members[3]->id,
-                'position' => 1
-            ]);
-            $card4->tags()->sync([$tags[1]->id]);
+            BoardList::create(['board_id' => $board->id, 'name' => 'To Do', 'position' => 1]);
+            BoardList::create(['board_id' => $board->id, 'name' => 'In Progress', 'position' => 2]);
+            BoardList::create(['board_id' => $board->id, 'name' => 'Done', 'position' => 3]);
         }
 
         return response()->json(['message' => 'Demo data seeded successfully']);

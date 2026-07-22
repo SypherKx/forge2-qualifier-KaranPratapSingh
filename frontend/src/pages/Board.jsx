@@ -25,104 +25,29 @@ const localDB = {
     localStorage.setItem('agile_boards', JSON.stringify(boards));
   },
   getBoardDetails: (id) => {
-    const details = JSON.parse(localStorage.getItem(`agile_board_details_${id}`) || 'null');
+    let details = JSON.parse(localStorage.getItem(`agile_board_details_${id}`) || 'null');
+    if (details && details.lists) {
+      details.lists = details.lists.map(list => ({
+        ...list,
+        cards: (list.cards || []).filter(c => 
+          c.title !== 'Scaffold backend API' && 
+          c.title !== 'Integrate Slack channels' && 
+          c.title !== 'Build React dashboard UI' && 
+          c.title !== 'Setup project repo'
+        )
+      }));
+    }
     if (!details && id === 101) {
-      const defaultMembers = localDB.getMembers();
-      const defaultTags = localDB.getTags();
-      const alphaDetails = {
+      details = {
         id: 101,
         name: 'Project Alpha',
         lists: [
-          {
-            id: 201,
-            board_id: 101,
-            name: 'To Do',
-            position: 1,
-            cards: [
-              {
-                id: 301,
-                board_list_id: 201,
-                title: 'Scaffold backend API',
-                description: 'Create Laravel API, migrations, controllers and routes for boards/lists/cards.',
-                due_date: new Date(Date.now() + 2 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[0].id,
-                member: defaultMembers[0],
-                position: 1,
-                tags: [defaultTags[1], defaultTags[3]],
-                subtasks: [
-                  { id: 1, text: 'Configure SQLite database schema', completed: true },
-                  { id: 2, text: 'Create KanbanController routes', completed: true },
-                  { id: 3, text: 'Write automated PHPUnit test cases', completed: false }
-                ]
-              },
-              {
-                id: 302,
-                board_list_id: 201,
-                title: 'Integrate Slack channels',
-                description: 'Set up bot tokens and wire Hermes + OpenClaw into Slack channels.',
-                due_date: new Date(Date.now() + 1 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[1].id,
-                member: defaultMembers[1],
-                position: 2,
-                tags: [defaultTags[3]],
-                subtasks: [
-                  { id: 1, text: 'Verify Bot Token Scopes', completed: true },
-                  { id: 2, text: 'Hook Socket Mode listeners', completed: false }
-                ]
-              }
-            ]
-          },
-          {
-            id: 202,
-            board_id: 101,
-            name: 'In Progress',
-            position: 2,
-            cards: [
-              {
-                id: 303,
-                board_list_id: 202,
-                title: 'Build React dashboard UI',
-                description: 'Develop responsive board layouts, swimlanes, and interactive modals in React.',
-                due_date: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[2].id,
-                member: defaultMembers[2],
-                position: 1,
-                tags: [defaultTags[2]],
-                subtasks: [
-                  { id: 1, text: 'Setup Vite + React state', completed: true },
-                  { id: 2, text: 'Add Framer Motion micro-interactions', completed: true },
-                  { id: 3, text: 'Add Live Activity Drawer', completed: false }
-                ]
-              }
-            ]
-          },
-          {
-            id: 203,
-            board_id: 101,
-            name: 'Done',
-            position: 3,
-            cards: [
-              {
-                id: 304,
-                board_list_id: 203,
-                title: 'Setup project repo',
-                description: 'Initialize Git repository, configure .gitignore, and prepare basic structure.',
-                due_date: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[3].id,
-                member: defaultMembers[3],
-                position: 1,
-                tags: [defaultTags[1]],
-                subtasks: [
-                  { id: 1, text: 'Create initial repository', completed: true },
-                  { id: 2, text: 'Lightweight asset cleanup', completed: true }
-                ]
-              }
-            ]
-          }
+          { id: 201, board_id: 101, name: 'To Do', position: 1, cards: [] },
+          { id: 202, board_id: 101, name: 'In Progress', position: 2, cards: [] },
+          { id: 203, board_id: 101, name: 'Done', position: 3, cards: [] }
         ]
       };
-      localStorage.setItem(`agile_board_details_101`, JSON.stringify(alphaDetails));
-      return alphaDetails;
+      localStorage.setItem(`agile_board_details_101`, JSON.stringify(details));
     }
     return details;
   },
@@ -164,13 +89,11 @@ const localDB = {
     localStorage.setItem('agile_tags', JSON.stringify(tags));
   },
   getActivities: () => {
-    const act = JSON.parse(localStorage.getItem('agile_activities') || '[]');
+    let act = JSON.parse(localStorage.getItem('agile_activities') || '[]');
+    act = act.filter(a => !a.text?.includes('Scaffold') && !a.text?.includes('Slack') && !a.text?.includes('React dashboard') && !a.text?.includes('Setup project repo') && !a.text?.includes('seeded workspace Project Alpha with 4 tasks'));
     if (act.length === 0) {
       const defaultAct = [
-        { id: 1, user: 'Amit Sharma', text: 'moved "Build React dashboard UI" to In Progress', time: '10 mins ago', type: 'move' },
-        { id: 2, user: 'Priya Patel', text: 'created card "Integrate Slack channels"', time: '35 mins ago', type: 'create' },
-        { id: 3, user: 'Neha Gupta', text: 'completed task "Setup project repo"', time: '2 hours ago', type: 'done' },
-        { id: 4, user: 'System Bot', text: 'seeded workspace Project Alpha with 4 tasks', time: '1 day ago', type: 'system' }
+        { id: 1, user: 'System Bot', text: 'workspace initialized', time: 'Just now', type: 'system' }
       ];
       localStorage.setItem('agile_activities', JSON.stringify(defaultAct));
       return defaultAct;
@@ -415,99 +338,16 @@ function Board() {
           id: boardId,
           name: 'Project Alpha',
           lists: [
-            {
-              id: 201,
-              board_id: boardId,
-              name: 'To Do',
-              position: 1,
-              cards: [
-                {
-                  id: 301,
-                  board_list_id: 201,
-                  title: 'Scaffold backend API',
-                  description: 'Create Laravel API, migrations, controllers and routes for boards/lists/cards.',
-                  due_date: new Date(Date.now() + 2 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[0].id,
-                  member: defaultMembers[0],
-                  position: 1,
-                  tags: [defaultTags[1], defaultTags[3]],
-                  subtasks: [
-                    { id: 1, text: 'Configure SQLite database schema', completed: true },
-                    { id: 2, text: 'Create KanbanController routes', completed: true },
-                    { id: 3, text: 'Write automated PHPUnit test cases', completed: false }
-                  ]
-                },
-                {
-                  id: 302,
-                  board_list_id: 201,
-                  title: 'Integrate Slack channels',
-                  description: 'Set up bot tokens and wire Hermes + OpenClaw into Slack channels.',
-                  due_date: new Date(Date.now() + 1 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[1].id,
-                  member: defaultMembers[1],
-                  position: 2,
-                  tags: [defaultTags[3]],
-                  subtasks: [
-                    { id: 1, text: 'Verify Bot Token Scopes', completed: true },
-                    { id: 2, text: 'Hook Socket Mode listeners', completed: false }
-                  ]
-                }
-              ]
-            },
-            {
-              id: 202,
-              board_id: boardId,
-              name: 'In Progress',
-              position: 2,
-              cards: [
-                {
-                  id: 303,
-                  board_list_id: 202,
-                  title: 'Build React dashboard UI',
-                  description: 'Develop responsive board layouts, swimlanes, and interactive modals in React.',
-                  due_date: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[2].id,
-                  member: defaultMembers[2],
-                  position: 1,
-                  tags: [defaultTags[2]],
-                  subtasks: [
-                    { id: 1, text: 'Setup Vite + React state', completed: true },
-                    { id: 2, text: 'Add Framer Motion micro-interactions', completed: true },
-                    { id: 3, text: 'Add Live Activity Drawer', completed: false }
-                  ]
-                }
-              ]
-            },
-            {
-              id: 203,
-              board_id: boardId,
-              name: 'Done',
-              position: 3,
-              cards: [
-                {
-                  id: 304,
-                  board_list_id: 203,
-                  title: 'Setup project repo',
-                  description: 'Initialize Git repository, configure .gitignore, and prepare basic structure.',
-                  due_date: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[3].id,
-                  member: defaultMembers[3],
-                  position: 1,
-                  tags: [defaultTags[1]],
-                  subtasks: [
-                    { id: 1, text: 'Create initial repository', completed: true },
-                    { id: 2, text: 'Lightweight asset cleanup', completed: true }
-                  ]
-                }
-              ]
-            }
+            { id: 201, board_id: boardId, name: 'To Do', position: 1, cards: [] },
+            { id: 202, board_id: boardId, name: 'In Progress', position: 2, cards: [] },
+            { id: 203, board_id: boardId, name: 'Done', position: 3, cards: [] }
           ]
         };
 
         localDB.saveBoardDetails(boardId, alphaDetails);
         setBoards(boardsList);
         setSelectedBoardId(boardId);
-        addActivity('System Bot', 'seeded workspace Project Alpha with demo cards', 'system');
+        addActivity('System Bot', 'initialized empty workspace Project Alpha', 'system');
         setSeeding(false);
         return;
       }
