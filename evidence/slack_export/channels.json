@@ -1,0 +1,35 @@
+[
+  {
+    "id": "C01SPRINTMAIN",
+    "name": "sprint-main",
+    "created": 1721643000,
+    "creator": "U01HUMAN",
+    "is_archived": false,
+    "is_general": true,
+    "members": ["U01HUMAN", "U02HERMES", "U03OPENCLAW"],
+    "topic": {"value": "High level direction and plan approvals for AgileBoard", "creator": "U01HUMAN", "last_set": 1721643000},
+    "purpose": {"value": "Sprint planning and human-agent review channel", "creator": "U01HUMAN", "last_set": 1721643000}
+  },
+  {
+    "id": "C02AGENTCODER",
+    "name": "agent-coder",
+    "created": 1721643050,
+    "creator": "U02HERMES",
+    "is_archived": false,
+    "is_general": false,
+    "members": ["U02HERMES", "U03OPENCLAW"],
+    "topic": {"value": "Sub-agent work assignment & task execution", "creator": "U02HERMES", "last_set": 1721643050},
+    "purpose": {"value": "Hermes (Brain) delegates coding tasks to OpenClaw (Hands)", "creator": "U02HERMES", "last_set": 1721643050}
+  },
+  {
+    "id": "C03AGENTLOG",
+    "name": "agent-log",
+    "created": 1721643100,
+    "creator": "U02HERMES",
+    "is_archived": false,
+    "is_general": false,
+    "members": ["U01HUMAN", "U02HERMES", "U03OPENCLAW"],
+    "topic": {"value": "System event audit trail and autonomous run logs", "creator": "U02HERMES", "last_set": 1721643100},
+    "purpose": {"value": "Raw activity logging and audit trail", "creator": "U02HERMES", "last_set": 1721643100}
+  }
+]

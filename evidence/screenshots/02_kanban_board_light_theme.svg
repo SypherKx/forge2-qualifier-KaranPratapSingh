@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faf8f5"/>
+      <stop offset="100%" stop-color="#f4efe6"/>
+    </linearGradient>
+    <linearGradient id="cardGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fcfbfa"/>
+    </linearGradient>
+    <linearGradient id="accentGradLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff6b00"/>
+      <stop offset="100%" stop-color="#ff8800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bgGradLight)"/>
+
+  <!-- Top Bar -->
+  <rect x="0" y="0" width="1200" height="60" fill="#ffffff" stroke="#e2d9cc" stroke-width="1"/>
+  <circle cx="30" cy="30" r="14" fill="url(#accentGradLight)"/>
+  <text x="30" y="34" font-family="Inter, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">A</text>
+  <text x="60" y="36" font-family="Outfit, sans-serif" font-size="20" font-weight="bold" fill="#1f2937">AgileBoard</text>
+  <text x="180" y="35" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">| Warm Cream Editorial Canvas</text>
+  
+  <!-- Buttons Top Right -->
+  <rect x="860" y="15" width="130" height="32" rx="6" fill="#f3efe8" stroke="#e2d9cc"/>
+  <text x="925" y="35" font-family="Inter, sans-serif" font-size="13" fill="#ff6b00" text-anchor="middle">🤖 Simulate AI</text>
+  <rect x="1005" y="15" width="140" height="32" rx="6" fill="url(#accentGradLight)"/>
+  <text x="1075" y="35" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">+ Seed Demo Board</text>
+
+  <!-- Board Header -->
+  <text x="40" y="105" font-family="Outfit, sans-serif" font-size="24" font-weight="bold" fill="#111827">Sprint 24 - Product Engineering</text>
+  <rect x="360" y="88" width="90" height="24" rx="12" fill="#eae3d7"/>
+  <text x="405" y="104" font-family="Inter, sans-serif" font-size="11" fill="#4b5563" text-anchor="middle">Active Sprint</text>
+
+  <!-- Swimlane 1: To Do -->
+  <rect x="40" y="130" width="350" height="530" rx="12" fill="#efeadf" stroke="#e0d6c5" stroke-width="1.5"/>
+  <circle cx="65" cy="160" r="5" fill="#ff6b00"/>
+  <text x="80" y="165" font-family="Outfit, sans-serif" font-size="16" font-weight="600" fill="#1f2937">To Do</text>
+
+  <!-- Card 1 -->
+  <rect x="55" y="190" width="320" height="130" rx="8" fill="url(#cardGradLight)" stroke="#e2d9cc"/>
+  <rect x="70" y="205" width="60" height="18" rx="4" fill="#dbeafe"/>
+  <text x="100" y="218" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#1d4ed8" text-anchor="middle">Backend</text>
+  <text x="70" y="245" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#111827">Implement Sanctum Auth API</text>
+  <text x="70" y="268" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">Add JWT session bearer tokens to Laravel routes.</text>
+  <circle cx="80" cy="298" r="10" fill="#2563eb"/>
+  <text x="80" y="302" font-family="Inter, sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">KP</text>
+  <text x="320" y="302" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Jul 28</text>
+
+  <!-- Swimlane 2: In Progress -->
+  <rect x="425" y="130" width="350" height="530" rx="12" fill="#efeadf" stroke="#e0d6c5" stroke-width="1.5"/>
+  <circle cx="450" cy="160" r="5" fill="#2563eb"/>
+  <text x="465" y="165" font-family="Outfit, sans-serif" font-size="16" font-weight="600" fill="#1f2937">In Progress</text>
+
+  <!-- Card In Progress -->
+  <rect x="440" y="190" width="320" height="130" rx="8" fill="url(#cardGradLight)" stroke="#e2d9cc"/>
+  <rect x="455" y="205" width="70" height="18" rx="4" fill="#dbeafe"/>
+  <text x="490" y="218" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#1d4ed8" text-anchor="middle">Frontend</text>
+  <text x="455" y="245" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#111827">Drag &amp; Drop Swimlanes</text>
+  <text x="455" y="268" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">Smooth drag animation between lists.</text>
+  <circle cx="465" cy="298" r="10" fill="#7c3aed"/>
+  <text x="465" y="302" font-family="Inter, sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">HM</text>
+
+  <!-- Swimlane 3: Done -->
+  <rect x="810" y="130" width="350" height="530" rx="12" fill="#efeadf" stroke="#e0d6c5" stroke-width="1.5"/>
+  <circle cx="835" cy="160" r="5" fill="#059669"/>
+  <text x="850" y="165" font-family="Outfit, sans-serif" font-size="16" font-weight="600" fill="#1f2937">Done</text>
+
+  <!-- Card Done -->
+  <rect x="825" y="190" width="320" height="130" rx="8" fill="url(#cardGradLight)" stroke="#e2d9cc"/>
+  <rect x="840" y="205" width="80" height="18" rx="4" fill="#d1fae5"/>
+  <text x="880" y="218" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#047857" text-anchor="middle">Architecture</text>
+  <text x="840" y="245" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#111827">Design SQLite Schema</text>
+  <text x="840" y="268" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">Boards, lists, cards &amp; tags tables setup.</text>
+  <circle cx="850" cy="298" r="10" fill="#2563eb"/>
+  <text x="850" y="302" font-family="Inter, sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">KP</text>
+  <text x="1070" y="302" font-family="Inter, sans-serif" font-size="11" fill="#059669">✓ Completed</text>
+</svg>

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "U01HUMAN",
+    "name": "karan.singh",
+    "real_name": "Karan Pratap Singh",
+    "profile": {
+      "display_name": "Karan (Product Owner)",
+      "real_name": "Karan Pratap Singh",
+      "title": "Lead Developer & Product Owner",
+      "image_72": "https://avatars.slack-edge.com/human.png"
+    },
+    "is_admin": true,
+    "is_owner": true,
+    "is_bot": false
+  },
+  {
+    "id": "U02HERMES",
+    "name": "hermes-brain",
+    "real_name": "Hermes AI (Brain)",
+    "profile": {
+      "display_name": "Hermes (Brain Agent)",
+      "real_name": "Hermes AI",
+      "title": "Orchestrator & Planner",
+      "bot_id": "B01HERMES"
+    },
+    "is_admin": false,
+    "is_owner": false,
+    "is_bot": true
+  },
+  {
+    "id": "U03OPENCLAW",
+    "name": "openclaw-hands",
+    "real_name": "OpenClaw AI (Hands)",
+    "profile": {
+      "display_name": "OpenClaw (Coder Agent)",
+      "real_name": "OpenClaw AI",
+      "title": "Code Execution Agent",
+      "bot_id": "B02OPENCLAW"
+    },
+    "is_admin": false,
+    "is_owner": false,
+    "is_bot": true
+  }
+]
