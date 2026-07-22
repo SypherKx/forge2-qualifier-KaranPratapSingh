@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AgenticIdeMockup from '../components/AgenticIdeMockup';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Plus, Trash2, Calendar, User, CheckCircle2, GripVertical, 
@@ -2019,72 +2020,16 @@ function Board() {
       {/* AI Orchestration Simulation Modal */}
       <AnimatePresence>
         {showSimModal && (
-          <div className="modal-overlay" style={{ backgroundColor: 'rgba(38, 37, 30, 0.6)', backdropFilter: 'blur(4px)' }}>
+          <div className="modal-overlay" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }} onClick={() => setShowSimModal(false)}>
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               exit={{ scale: 0.95, opacity: 0 }}
               className="modal-content"
-              style={{ maxWidth: '640px', padding: '0', overflow: 'hidden', border: '1px solid var(--accent-primary)', boxShadow: '0 0 30px rgba(245, 78, 0, 0.15)' }}
+              style={{ maxWidth: '1000px', padding: '0', overflow: 'hidden', border: '1px solid var(--accent-primary)', boxShadow: '0 0 40px rgba(245, 78, 0, 0.25)' }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="ide-header" style={{ padding: '0.75rem 1.5rem', background: 'var(--bg-surface-soft)', borderBottom: '1px solid var(--border-color)' }}>
-                <div className="ide-dot" style={{ backgroundColor: '#ff5f56' }}></div>
-                <div className="ide-dot" style={{ backgroundColor: '#ffbd2e' }}></div>
-                <div className="ide-dot" style={{ backgroundColor: '#27c93f' }}></div>
-                <div className="ide-title" style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 0 0 1rem', fontFamily: 'var(--font-mono)' }}>
-                  <Terminal size={14} className="text-primary" /> slack-socket-agent-orchestrator.log
-                </div>
-              </div>
-              
-              <div style={{ height: '360px', overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--bg-surface)' }}>
-                {simSteps.slice(0, simStep + 1).map((step, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ 
-                      border: '1px solid var(--border-color)', 
-                      borderRadius: '8px', 
-                      background: 'var(--bg-surface-soft)',
-                      padding: '0.75rem 1rem'
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', borderBottom: '1px solid var(--border-color-soft)', paddingBottom: '0.25rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ 
-                          width: '24px', 
-                          height: '24px', 
-                          borderRadius: '4px', 
-                          background: 'var(--accent-primary)', 
-                          color: '#fff', 
-                          fontWeight: '700', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          fontSize: '11px'
-                        }}>
-                          {step.avatar}
-                        </span>
-                        <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)' }}>{step.sender}</span>
-                      </div>
-                      <span className={`timeline-pill timeline-pill-${step.status}`} style={{ fontSize: '9px', padding: '2px 6px' }}>{step.status}</span>
-                    </div>
-                    <p style={{ fontSize: '13px', lineHeight: '1.4', color: 'var(--text-secondary)', fontFamily: step.status === 'grep' || step.status === 'edit' || step.status === 'done' ? 'var(--font-mono)' : 'var(--font-sans)' }}>
-                      {step.text}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-              
-              <div style={{ padding: '1rem 1.5rem', background: 'var(--bg-surface-soft)', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  {simStep < simSteps.length ? '🤖 Agent compiling workspace...' : '✅ Compilation done!'}
-                </span>
-                <span className="timeline-pill timeline-pill-thinking" style={{ animation: simStep < simSteps.length ? 'pulse 1s infinite' : 'none' }}>
-                  {simStep < simSteps.length ? 'BUILDING' : 'READY'}
-                </span>
-              </div>
+              <AgenticIdeMockup autoPlay={true} />
             </motion.div>
           </div>
         )}
