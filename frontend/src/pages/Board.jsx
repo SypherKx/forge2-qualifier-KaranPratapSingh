@@ -69,6 +69,68 @@ const localDB = {
                   { id: 1, text: 'Verify Bot Token Scopes', completed: true },
                   { id: 2, text: 'Hook Socket Mode listeners', completed: false }
                 ]
+              },
+              {
+                id: 305,
+                board_list_id: 201,
+                title: 'Setup CI/CD GitHub Actions Workflow',
+                description: 'Configure automated linting, test suite execution, and Render deployment triggers on push to main branch.',
+                due_date: new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString(),
+                member_id: defaultMembers[3].id,
+                member: defaultMembers[3],
+                position: 3,
+                tags: [defaultTags[1], defaultTags[3]],
+                subtasks: [
+                  { id: 1, text: 'Write .github/workflows/deploy.yml', completed: true },
+                  { id: 2, text: 'Configure Render deployment webhook secrets', completed: false },
+                  { id: 3, text: 'Verify automated pull request checks', completed: false }
+                ]
+              },
+              {
+                id: 306,
+                board_list_id: 201,
+                title: 'Implement OAuth2 & JWT Auth Guard',
+                description: 'Add secure authentication flow using Laravel Sanctum and React OAuth SSO login.',
+                due_date: new Date(Date.now() + 4 * 24 * 3600 * 1000).toISOString(),
+                member_id: defaultMembers[0].id,
+                member: defaultMembers[0],
+                position: 4,
+                tags: [defaultTags[1], defaultTags[2]],
+                subtasks: [
+                  { id: 1, text: 'Install Laravel Sanctum package', completed: true },
+                  { id: 2, text: 'Create AuthController login & register endpoints', completed: false },
+                  { id: 3, text: 'Add JWT interceptors in React frontend', completed: false }
+                ]
+              },
+              {
+                id: 307,
+                board_list_id: 201,
+                title: 'Lighthouse Performance & Asset Optimization',
+                description: 'Optimize bundle size, leverage Gzip compression, and target a 95+ score on Google Lighthouse.',
+                due_date: new Date(Date.now() + 5 * 24 * 3600 * 1000).toISOString(),
+                member_id: defaultMembers[1].id,
+                member: defaultMembers[1],
+                position: 5,
+                tags: [defaultTags[2], defaultTags[3]],
+                subtasks: [
+                  { id: 1, text: 'Audit vendor chunk sizes', completed: true },
+                  { id: 2, text: 'Enable asset compression in Vite build', completed: false }
+                ]
+              },
+              {
+                id: 308,
+                board_list_id: 201,
+                title: 'Websocket Real-Time Collaboration Engine',
+                description: 'Set up WebSocket event broadcasting so board changes reflect immediately across open browsers.',
+                due_date: new Date(Date.now() + 6 * 24 * 3600 * 1000).toISOString(),
+                member_id: defaultMembers[2].id,
+                member: defaultMembers[2],
+                position: 6,
+                tags: [defaultTags[1]],
+                subtasks: [
+                  { id: 1, text: 'Configure Laravel Echo listener', completed: false },
+                  { id: 2, text: 'Broadcast CardMoved & CardCreated events', completed: false }
+                ]
               }
             ]
           },
@@ -450,6 +512,68 @@ function Board() {
                   subtasks: [
                     { id: 1, text: 'Verify Bot Token Scopes', completed: true },
                     { id: 2, text: 'Hook Socket Mode listeners', completed: false }
+                  ]
+                },
+                {
+                  id: 305,
+                  board_list_id: 201,
+                  title: 'Setup CI/CD GitHub Actions Workflow',
+                  description: 'Configure automated linting, test suite execution, and Render deployment triggers on push to main branch.',
+                  due_date: new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString(),
+                  member_id: defaultMembers[3].id,
+                  member: defaultMembers[3],
+                  position: 3,
+                  tags: [defaultTags[1], defaultTags[3]],
+                  subtasks: [
+                    { id: 1, text: 'Write .github/workflows/deploy.yml', completed: true },
+                    { id: 2, text: 'Configure Render deployment webhook secrets', completed: false },
+                    { id: 3, text: 'Verify automated pull request checks', completed: false }
+                  ]
+                },
+                {
+                  id: 306,
+                  board_list_id: 201,
+                  title: 'Implement OAuth2 & JWT Auth Guard',
+                  description: 'Add secure authentication flow using Laravel Sanctum and React OAuth SSO login.',
+                  due_date: new Date(Date.now() + 4 * 24 * 3600 * 1000).toISOString(),
+                  member_id: defaultMembers[0].id,
+                  member: defaultMembers[0],
+                  position: 4,
+                  tags: [defaultTags[1], defaultTags[2]],
+                  subtasks: [
+                    { id: 1, text: 'Install Laravel Sanctum package', completed: true },
+                    { id: 2, text: 'Create AuthController login & register endpoints', completed: false },
+                    { id: 3, text: 'Add JWT interceptors in React frontend', completed: false }
+                  ]
+                },
+                {
+                  id: 307,
+                  board_list_id: 201,
+                  title: 'Lighthouse Performance & Asset Optimization',
+                  description: 'Optimize bundle size, leverage Gzip compression, and target a 95+ score on Google Lighthouse.',
+                  due_date: new Date(Date.now() + 5 * 24 * 3600 * 1000).toISOString(),
+                  member_id: defaultMembers[1].id,
+                  member: defaultMembers[1],
+                  position: 5,
+                  tags: [defaultTags[2], defaultTags[3]],
+                  subtasks: [
+                    { id: 1, text: 'Audit vendor chunk sizes', completed: true },
+                    { id: 2, text: 'Enable asset compression in Vite build', completed: false }
+                  ]
+                },
+                {
+                  id: 308,
+                  board_list_id: 201,
+                  title: 'Websocket Real-Time Collaboration Engine',
+                  description: 'Set up WebSocket event broadcasting so board changes reflect immediately across open browsers.',
+                  due_date: new Date(Date.now() + 6 * 24 * 3600 * 1000).toISOString(),
+                  member_id: defaultMembers[2].id,
+                  member: defaultMembers[2],
+                  position: 6,
+                  tags: [defaultTags[1]],
+                  subtasks: [
+                    { id: 1, text: 'Configure Laravel Echo listener', completed: false },
+                    { id: 2, text: 'Broadcast CardMoved & CardCreated events', completed: false }
                   ]
                 }
               ]
