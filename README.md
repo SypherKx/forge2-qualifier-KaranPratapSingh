@@ -12,7 +12,7 @@ This project was built entirely by orchestrating a two-agent system (**Hermes** 
 
 | Deliverable | Location / Access Link | Description |
 | :--- | :--- | :--- |
-| 🌐 **Live App URL** | [forge2-qualifier-karan-pratap-singh.vercel.app](https://forge2-qualifier-karan-pratap-singh.vercel.app) | Deployed live web application on Vercel |
+| 🌐 **Live App URL** | [forage2karan.vercel.app](https://forage2karan.vercel.app) | Deployed live web application on Vercel |
 | 🐙 **Public GitHub Repo** | [github.com/SypherKx/forge2-qualifier-KaranPratapSingh](https://github.com/SypherKx/forge2-qualifier-KaranPratapSingh) | Public cloneable code repository |
 | 📹 **Walkthrough Video** | [evidence/walkthrough.mp4](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/evidence/walkthrough.mp4) | 60-90s screen-recording evidence inside repo (32.7 MB) |
 | 💬 **Slack Export Logs** | [evidence/slack_export/](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/evidence/slack_export/) | JSON exports of `#sprint-main`, `#agent-coder`, `#agent-log` |
@@ -145,6 +145,6 @@ If you have PHP 8.2+ and Composer installed:
 ## Deployment & Repository Info
 
 - **Public GitHub Repository**: [https://github.com/SypherKx/forge2-qualifier-KaranPratapSingh](https://github.com/SypherKx/forge2-qualifier-KaranPratapSingh)
-- **Live Demo App**: [https://forge2-qualifier-karan-pratap-singh.vercel.app](https://forge2-qualifier-karan-pratap-singh.vercel.app)
+- **Live Demo App**: [https://forage2karan.vercel.app](https://forage2karan.vercel.app)
 - **Backend API (Render)**: [https://forge2-laravel-api.onrender.com](https://forge2-laravel-api.onrender.com)
 - **Author / Developer**: Karan Pratap Singh
