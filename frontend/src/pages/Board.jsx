@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Calendar, User, CheckCircle2, GripVertical, AlertCircle, Sun, Moon, Play, MessageSquare, Terminal } from 'lucide-react';
+import { 
+  ArrowLeft, Plus, Trash2, Calendar, User, CheckCircle2, GripVertical, 
+  AlertCircle, Sun, Moon, Play, MessageSquare, Terminal, Activity, 
+  Filter, Search, Sparkles, CheckSquare, ChevronLeft, ChevronRight, 
+  Send, Clock, TrendingUp, BarChart3, X 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -22,7 +27,6 @@ const localDB = {
   getBoardDetails: (id) => {
     const details = JSON.parse(localStorage.getItem(`agile_board_details_${id}`) || 'null');
     if (!details && id === 101) {
-      // Auto seed details for Project Alpha if missing
       const defaultMembers = localDB.getMembers();
       const defaultTags = localDB.getTags();
       const alphaDetails = {
@@ -44,7 +48,12 @@ const localDB = {
                 member_id: defaultMembers[0].id,
                 member: defaultMembers[0],
                 position: 1,
-                tags: [defaultTags[1], defaultTags[3]]
+                tags: [defaultTags[1], defaultTags[3]],
+                subtasks: [
+                  { id: 1, text: 'Configure SQLite database schema', completed: true },
+                  { id: 2, text: 'Create KanbanController routes', completed: true },
+                  { id: 3, text: 'Write automated PHPUnit test cases', completed: false }
+                ]
               },
               {
                 id: 302,
@@ -55,7 +64,11 @@ const localDB = {
                 member_id: defaultMembers[1].id,
                 member: defaultMembers[1],
                 position: 2,
-                tags: [defaultTags[3]]
+                tags: [defaultTags[3]],
+                subtasks: [
+                  { id: 1, text: 'Verify Bot Token Scopes', completed: true },
+                  { id: 2, text: 'Hook Socket Mode listeners', completed: false }
+                ]
               }
             ]
           },
@@ -74,7 +87,12 @@ const localDB = {
                 member_id: defaultMembers[2].id,
                 member: defaultMembers[2],
                 position: 1,
-                tags: [defaultTags[2]]
+                tags: [defaultTags[2]],
+                subtasks: [
+                  { id: 1, text: 'Setup Vite + React state', completed: true },
+                  { id: 2, text: 'Add Framer Motion micro-interactions', completed: true },
+                  { id: 3, text: 'Add Live Activity Drawer', completed: false }
+                ]
               }
             ]
           },
@@ -93,7 +111,11 @@ const localDB = {
                 member_id: defaultMembers[3].id,
                 member: defaultMembers[3],
                 position: 1,
-                tags: [defaultTags[1]]
+                tags: [defaultTags[1]],
+                subtasks: [
+                  { id: 1, text: 'Create initial repository', completed: true },
+                  { id: 2, text: 'Lightweight asset cleanup', completed: true }
+                ]
               }
             ]
           }
@@ -140,6 +162,23 @@ const localDB = {
   },
   saveTags: (tags) => {
     localStorage.setItem('agile_tags', JSON.stringify(tags));
+  },
+  getActivities: () => {
+    const act = JSON.parse(localStorage.getItem('agile_activities') || '[]');
+    if (act.length === 0) {
+      const defaultAct = [
+        { id: 1, user: 'Amit Sharma', text: 'moved "Build React dashboard UI" to In Progress', time: '10 mins ago', type: 'move' },
+        { id: 2, user: 'Priya Patel', text: 'created card "Integrate Slack channels"', time: '35 mins ago', type: 'create' },
+        { id: 3, user: 'Neha Gupta', text: 'completed task "Setup project repo"', time: '2 hours ago', type: 'done' },
+        { id: 4, user: 'System Bot', text: 'seeded workspace Project Alpha with 4 tasks', time: '1 day ago', type: 'system' }
+      ];
+      localStorage.setItem('agile_activities', JSON.stringify(defaultAct));
+      return defaultAct;
+    }
+    return act;
+  },
+  saveActivities: (activities) => {
+    localStorage.setItem('agile_activities', JSON.stringify(activities));
   }
 };
 
@@ -168,6 +207,18 @@ function Board() {
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
+  // Activities State & Drawer
+  const [activities, setActivities] = useState([]);
+  const [showActivityDrawer, setShowActivityDrawer] = useState(false);
+  const [newActivityNote, setNewActivityNote] = useState('');
+  const [activityFilter, setActivityFilter] = useState('all');
+
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTagFilter, setSelectedTagFilter] = useState('');
+  const [selectedMemberFilter, setSelectedMemberFilter] = useState('');
+  const [filterOverdueOnly, setFilterOverdueOnly] = useState(false);
+
   // Modal States
   const [showBoardModal, setShowBoardModal] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
@@ -183,11 +234,16 @@ function Board() {
     description: '',
     due_date: '',
     member_id: '',
-    tags: []
+    tags: [],
+    subtasks: []
   });
+  const [newSubtaskInput, setNewSubtaskInput] = useState('');
 
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [memberForm, setMemberForm] = useState({ name: '', email: '', avatar_color: '#f54e00' });
+
+  // AI Summary Toast / Modal State
+  const [showBriefModal, setShowBriefModal] = useState(false);
 
   // AI Agent Build Simulation States
   const [showSimModal, setShowSimModal] = useState(false);
@@ -231,8 +287,20 @@ function Board() {
     }
   ];
 
+  const addActivity = (user, text, type = 'user') => {
+    const newEntry = {
+      id: Date.now(),
+      user: user || 'Team Member',
+      text,
+      time: 'Just now',
+      type
+    };
+    const updated = [newEntry, ...activities];
+    setActivities(updated);
+    localDB.saveActivities(updated);
+  };
+
   useEffect(() => {
-    // Ping backend to check if we should run in offline mode
     const checkConnection = async () => {
       try {
         const res = await fetch(`${API_BASE}/boards`, { signal: AbortSignal.timeout(1000) });
@@ -246,6 +314,7 @@ function Board() {
       }
     };
     checkConnection();
+    setActivities(localDB.getActivities());
   }, []);
 
   useEffect(() => {
@@ -361,7 +430,12 @@ function Board() {
                   member_id: defaultMembers[0].id,
                   member: defaultMembers[0],
                   position: 1,
-                  tags: [defaultTags[1], defaultTags[3]]
+                  tags: [defaultTags[1], defaultTags[3]],
+                  subtasks: [
+                    { id: 1, text: 'Configure SQLite database schema', completed: true },
+                    { id: 2, text: 'Create KanbanController routes', completed: true },
+                    { id: 3, text: 'Write automated PHPUnit test cases', completed: false }
+                  ]
                 },
                 {
                   id: 302,
@@ -372,7 +446,11 @@ function Board() {
                   member_id: defaultMembers[1].id,
                   member: defaultMembers[1],
                   position: 2,
-                  tags: [defaultTags[3]]
+                  tags: [defaultTags[3]],
+                  subtasks: [
+                    { id: 1, text: 'Verify Bot Token Scopes', completed: true },
+                    { id: 2, text: 'Hook Socket Mode listeners', completed: false }
+                  ]
                 }
               ]
             },
@@ -391,7 +469,12 @@ function Board() {
                   member_id: defaultMembers[2].id,
                   member: defaultMembers[2],
                   position: 1,
-                  tags: [defaultTags[2]]
+                  tags: [defaultTags[2]],
+                  subtasks: [
+                    { id: 1, text: 'Setup Vite + React state', completed: true },
+                    { id: 2, text: 'Add Framer Motion micro-interactions', completed: true },
+                    { id: 3, text: 'Add Live Activity Drawer', completed: false }
+                  ]
                 }
               ]
             },
@@ -410,7 +493,11 @@ function Board() {
                   member_id: defaultMembers[3].id,
                   member: defaultMembers[3],
                   position: 1,
-                  tags: [defaultTags[1]]
+                  tags: [defaultTags[1]],
+                  subtasks: [
+                    { id: 1, text: 'Create initial repository', completed: true },
+                    { id: 2, text: 'Lightweight asset cleanup', completed: true }
+                  ]
                 }
               ]
             }
@@ -420,6 +507,7 @@ function Board() {
         localDB.saveBoardDetails(boardId, alphaDetails);
         setBoards(boardsList);
         setSelectedBoardId(boardId);
+        addActivity('System Bot', 'seeded workspace Project Alpha with demo cards', 'system');
         setSeeding(false);
         return;
       }
@@ -429,6 +517,7 @@ function Board() {
       await fetchBoards();
       await fetchMembers();
       await fetchTags();
+      addActivity('System Bot', 'seeded demo workspace', 'system');
     } catch (err) {
       console.error("Error seeding demo:", err);
       alert("Failed to connect to backend server. Reverting to Offline Mode.");
@@ -449,24 +538,21 @@ function Board() {
         boardsList.push(newBoard);
         localDB.saveBoards(boardsList);
 
-        const todoId = boardId + 1;
-        const doingId = boardId + 2;
-        const doneId = boardId + 3;
-
-        const boardDetailsData = {
+        const newBoardDetails = {
           id: boardId,
           name: newBoardName,
           lists: [
-            { id: todoId, board_id: boardId, name: 'To Do', position: 1, cards: [] },
-            { id: doingId, board_id: boardId, name: 'In Progress', position: 2, cards: [] },
-            { id: doneId, board_id: boardId, name: 'Done', position: 3, cards: [] }
+            { id: Date.now() + 1, board_id: boardId, name: 'To Do', position: 1, cards: [] },
+            { id: Date.now() + 2, board_id: boardId, name: 'In Progress', position: 2, cards: [] },
+            { id: Date.now() + 3, board_id: boardId, name: 'Done', position: 3, cards: [] }
           ]
         };
-        localDB.saveBoardDetails(boardId, boardDetailsData);
+        localDB.saveBoardDetails(boardId, newBoardDetails);
         setBoards(boardsList);
         setSelectedBoardId(boardId);
         setNewBoardName('');
         setShowBoardModal(false);
+        addActivity('Workspace Lead', `created new board "${newBoardName}"`, 'create');
         return;
       }
 
@@ -476,10 +562,11 @@ function Board() {
         body: JSON.stringify({ name: newBoardName })
       });
       const data = await res.json();
-      setBoards([...boards, data]);
+      await fetchBoards();
       setSelectedBoardId(data.id);
       setNewBoardName('');
       setShowBoardModal(false);
+      addActivity('Workspace Lead', `created board "${newBoardName}"`, 'create');
     } catch (err) {
       console.error(err);
     }
@@ -487,7 +574,7 @@ function Board() {
 
   const handleCreateList = async (e) => {
     e.preventDefault();
-    if (!newListName.trim() || !selectedBoardId) return;
+    if (!newListName.trim()) return;
     try {
       if (useLocalStorage) {
         const details = localDB.getBoardDetails(selectedBoardId);
@@ -504,6 +591,7 @@ function Board() {
         fetchBoardDetails(selectedBoardId);
         setNewListName('');
         setShowListModal(false);
+        addActivity('Workspace Lead', `added new column "${newListName}"`, 'create');
         return;
       }
 
@@ -516,6 +604,7 @@ function Board() {
       fetchBoardDetails(selectedBoardId);
       setNewListName('');
       setShowListModal(false);
+      addActivity('Workspace Lead', `added column "${newListName}"`, 'create');
     } catch (err) {
       console.error(err);
     }
@@ -524,12 +613,14 @@ function Board() {
   const handleDeleteBoard = async () => {
     if (!selectedBoardId || !window.confirm("Are you sure you want to delete this board and all its tasks?")) return;
     try {
+      const bName = boardDetails ? boardDetails.name : 'Board';
       if (useLocalStorage) {
         const boardsList = localDB.getBoards().filter(b => b.id !== selectedBoardId);
         localDB.saveBoards(boardsList);
         localStorage.removeItem(`agile_board_details_${selectedBoardId}`);
         setBoards(boardsList);
         setSelectedBoardId(boardsList.length > 0 ? boardsList[0].id : null);
+        addActivity('Workspace Lead', `deleted board "${bName}"`, 'delete');
         return;
       }
 
@@ -537,6 +628,7 @@ function Board() {
       const remaining = boards.filter(b => b.id !== selectedBoardId);
       setBoards(remaining);
       setSelectedBoardId(remaining.length > 0 ? remaining[0].id : null);
+      addActivity('Workspace Lead', `deleted board "${bName}"`, 'delete');
     } catch (err) {
       console.error(err);
     }
@@ -566,7 +658,8 @@ function Board() {
                     due_date: cardForm.due_date || null,
                     member_id: cardForm.member_id ? Number(cardForm.member_id) : null,
                     member: cardMember,
-                    tags: cardTags
+                    tags: cardTags,
+                    subtasks: cardForm.subtasks || []
                   };
                 }
                 return c;
@@ -574,6 +667,7 @@ function Board() {
             }
             return lst;
           });
+          addActivity(cardMember ? cardMember.name : 'Team Member', `updated card "${cardForm.title}"`, 'edit');
         } else {
           const newCard = {
             id: Date.now(),
@@ -584,6 +678,7 @@ function Board() {
             member_id: cardForm.member_id ? Number(cardForm.member_id) : null,
             member: cardMember,
             tags: cardTags,
+            subtasks: cardForm.subtasks || [],
             position: 1
           };
           details.lists = details.lists.map(lst => {
@@ -594,6 +689,7 @@ function Board() {
             }
             return lst;
           });
+          addActivity(cardMember ? cardMember.name : 'Team Member', `created card "${cardForm.title}"`, 'create');
         }
 
         localDB.saveBoardDetails(selectedBoardId, details);
@@ -628,6 +724,7 @@ function Board() {
       fetchBoardDetails(selectedBoardId);
       setShowCardModal(false);
       setSelectedCard(null);
+      addActivity('Team Member', selectedCard ? `updated card "${cardForm.title}"` : `created card "${cardForm.title}"`, selectedCard ? 'edit' : 'create');
     } catch (err) {
       console.error(err);
     }
@@ -636,6 +733,7 @@ function Board() {
   const handleDeleteCard = async (cardId) => {
     if (!window.confirm("Delete this card?")) return;
     try {
+      const cTitle = selectedCard ? selectedCard.title : 'Card';
       if (useLocalStorage) {
         const details = localDB.getBoardDetails(selectedBoardId);
         details.lists = details.lists.map(lst => {
@@ -648,6 +746,7 @@ function Board() {
         fetchBoardDetails(selectedBoardId);
         setShowCardModal(false);
         setSelectedCard(null);
+        addActivity('Team Member', `deleted card "${cTitle}"`, 'delete');
         return;
       }
 
@@ -655,6 +754,7 @@ function Board() {
       fetchBoardDetails(selectedBoardId);
       setShowCardModal(false);
       setSelectedCard(null);
+      addActivity('Team Member', `deleted card "${cTitle}"`, 'delete');
     } catch (err) {
       console.error(err);
     }
@@ -667,8 +767,10 @@ function Board() {
       description: card.description || '',
       due_date: card.due_date ? card.due_date.substring(0, 16) : '',
       member_id: card.member_id || '',
-      tags: card.tags ? card.tags.map(t => t.id) : []
+      tags: card.tags ? card.tags.map(t => t.id) : [],
+      subtasks: card.subtasks ? [...card.subtasks] : []
     });
+    setNewSubtaskInput('');
     setShowCardModal(true);
   };
 
@@ -680,9 +782,123 @@ function Board() {
       description: '',
       due_date: '',
       member_id: '',
-      tags: []
+      tags: [],
+      subtasks: []
     });
+    setNewSubtaskInput('');
     setShowCardModal(true);
+  };
+
+  const handleAddSubtask = () => {
+    if (!newSubtaskInput.trim()) return;
+    const newSt = {
+      id: Date.now(),
+      text: newSubtaskInput.trim(),
+      completed: false
+    };
+    setCardForm(prev => ({
+      ...prev,
+      subtasks: [...(prev.subtasks || []), newSt]
+    }));
+    setNewSubtaskInput('');
+  };
+
+  const handleToggleSubtask = (cardId, subtaskId, e) => {
+    e.stopPropagation();
+    if (!boardDetails) return;
+    const details = { ...boardDetails };
+    let toggledText = '';
+    let isNowCompleted = false;
+
+    details.lists = details.lists.map(lst => {
+      if (lst.cards) {
+        lst.cards = lst.cards.map(c => {
+          if (c.id === cardId) {
+            const updatedSt = (c.subtasks || []).map(st => {
+              if (st.id === subtaskId) {
+                toggledText = st.text;
+                isNowCompleted = !st.completed;
+                return { ...st, completed: !st.completed };
+              }
+              return st;
+            });
+            return { ...c, subtasks: updatedSt };
+          }
+          return c;
+        });
+      }
+      return lst;
+    });
+
+    setBoardDetails(details);
+    if (useLocalStorage) {
+      localDB.saveBoardDetails(selectedBoardId, details);
+    }
+    if (toggledText) {
+      addActivity('Team Member', `${isNowCompleted ? 'completed' : 'reopened'} subtask "${toggledText}"`, 'check');
+    }
+  };
+
+  const handleMoveCardStep = async (card, direction, e) => {
+    e.stopPropagation();
+    if (!boardDetails || !boardDetails.lists) return;
+    const currentListIndex = boardDetails.lists.findIndex(l => l.id === card.board_list_id);
+    if (currentListIndex === -1) return;
+
+    const targetListIndex = direction === 'next' ? currentListIndex + 1 : currentListIndex - 1;
+    if (targetListIndex < 0 || targetListIndex >= boardDetails.lists.length) return;
+
+    const targetList = boardDetails.lists[targetListIndex];
+    await handleDropDirect(card.id, card.board_list_id, targetList.id);
+  };
+
+  const handleDropDirect = async (cardId, oldListId, targetListId) => {
+    if (oldListId === targetListId) return;
+
+    const details = localDB.getBoardDetails(selectedBoardId) || boardDetails;
+    let cardToMove = null;
+    let targetListName = '';
+    
+    details.lists = details.lists.map(lst => {
+      if (lst.id === oldListId && lst.cards) {
+        cardToMove = lst.cards.find(c => c.id === cardId);
+        lst.cards = lst.cards.filter(c => c.id !== cardId);
+      }
+      if (lst.id === targetListId) {
+        targetListName = lst.name;
+      }
+      return lst;
+    });
+
+    if (cardToMove) {
+      cardToMove.board_list_id = targetListId;
+      details.lists = details.lists.map(lst => {
+        if (lst.id === targetListId) {
+          cardToMove.position = lst.cards ? lst.cards.length + 1 : 1;
+          lst.cards = lst.cards || [];
+          lst.cards.push(cardToMove);
+        }
+        return lst;
+      });
+      addActivity(cardToMove.member ? cardToMove.member.name : 'Team Member', `moved "${cardToMove.title}" to ${targetListName}`, 'move');
+    }
+
+    if (useLocalStorage) {
+      localDB.saveBoardDetails(selectedBoardId, details);
+      fetchBoardDetails(selectedBoardId);
+      return;
+    }
+
+    setBoardDetails(details);
+    try {
+      await fetch(`${API_BASE}/cards/${cardId}/move`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ board_list_id: targetListId, position: 1 })
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleCreateMember = async (e) => {
@@ -701,6 +917,7 @@ function Board() {
         setMembers(membersList);
         setShowMemberModal(false);
         setMemberForm({ name: '', email: '', avatar_color: '#f54e00' });
+        addActivity('Workspace Lead', `added team member "${memberForm.name}"`, 'create');
         return;
       }
 
@@ -713,6 +930,7 @@ function Board() {
         await fetchMembers();
         setShowMemberModal(false);
         setMemberForm({ name: '', email: '', avatar_color: '#f54e00' });
+        addActivity('Workspace Lead', `added team member "${memberForm.name}"`, 'create');
       } else {
         const errData = await res.json();
         alert(errData.message || "Error creating member");
@@ -720,6 +938,13 @@ function Board() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleAddActivityNote = (e) => {
+    e.preventDefault();
+    if (!newActivityNote.trim()) return;
+    addActivity('You (Lead)', newActivityNote.trim(), 'comment');
+    setNewActivityNote('');
   };
 
   const handleToggleFormTag = (tagId) => {
@@ -750,66 +975,7 @@ function Board() {
       const rawData = e.dataTransfer.getData('text/plain');
       if (!rawData) return;
       const { cardId, oldListId } = JSON.parse(rawData);
-      
-      if (oldListId === targetListId) return;
-
-      if (useLocalStorage) {
-        const details = localDB.getBoardDetails(selectedBoardId);
-        let cardToMove = null;
-        
-        details.lists = details.lists.map(lst => {
-          if (lst.id === oldListId) {
-            cardToMove = lst.cards.find(c => c.id === cardId);
-            lst.cards = lst.cards.filter(c => c.id !== cardId);
-          }
-          return lst;
-        });
-
-        if (cardToMove) {
-          cardToMove.board_list_id = targetListId;
-          details.lists = details.lists.map(lst => {
-            if (lst.id === targetListId) {
-              cardToMove.position = lst.cards ? lst.cards.length + 1 : 1;
-              lst.cards = lst.cards || [];
-              lst.cards.push(cardToMove);
-            }
-            return lst;
-          });
-        }
-        
-        localDB.saveBoardDetails(selectedBoardId, details);
-        fetchBoardDetails(selectedBoardId);
-        return;
-      }
-
-      const list = boardDetails.lists.find(l => l.id === targetListId);
-      const newPos = list.cards ? list.cards.length + 1 : 1;
-
-      const updatedLists = boardDetails.lists.map(l => {
-        if (l.id === oldListId) {
-          return { ...l, cards: l.cards.filter(c => c.id !== cardId) };
-        }
-        if (l.id === targetListId) {
-          const cardToMove = boardDetails.lists.flatMap(lst => lst.cards).find(c => c.id === cardId);
-          if (cardToMove) {
-            const moved = { ...cardToMove, board_list_id: targetListId, position: newPos };
-            return { ...l, cards: [...(l.cards || []), moved] };
-          }
-        }
-        return l;
-      });
-      setBoardDetails({ ...boardDetails, lists: updatedLists });
-
-      await fetch(`${API_BASE}/cards/${cardId}/move`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          board_list_id: targetListId,
-          position: newPos
-        })
-      });
-      
-      fetchBoardDetails(selectedBoardId);
+      await handleDropDirect(cardId, oldListId, targetListId);
     } catch (err) {
       console.error("Drop handling failed:", err);
     }
@@ -825,6 +991,63 @@ function Board() {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
+  // Compute Board Stats
+  const computeStats = () => {
+    if (!boardDetails || !boardDetails.lists) return { total: 0, done: 0, inProgress: 0, overdue: 0, percent: 0 };
+    let total = 0;
+    let done = 0;
+    let inProgress = 0;
+    let overdue = 0;
+
+    boardDetails.lists.forEach(l => {
+      const listName = l.name.toLowerCase();
+      (l.cards || []).forEach(c => {
+        total++;
+        if (listName.includes('done') || listName.includes('completed')) {
+          done++;
+        } else if (listName.includes('progress') || listName.includes('review') || listName.includes('dev')) {
+          inProgress++;
+        }
+        if (isOverdue(c.due_date)) {
+          overdue++;
+        }
+      });
+    });
+
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { total, done, inProgress, overdue, percent };
+  };
+
+  const stats = computeStats();
+
+  // Filter Cards Logic
+  const getFilteredCards = (cards) => {
+    if (!cards) return [];
+    return cards.filter(c => {
+      // Search query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchTitle = c.title.toLowerCase().includes(q);
+        const matchDesc = c.description && c.description.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc) return false;
+      }
+      // Tag filter
+      if (selectedTagFilter) {
+        const hasTag = c.tags && c.tags.some(t => t.id === Number(selectedTagFilter));
+        if (!hasTag) return false;
+      }
+      // Member filter
+      if (selectedMemberFilter) {
+        if (Number(c.member_id) !== Number(selectedMemberFilter)) return false;
+      }
+      // Overdue filter
+      if (filterOverdueOnly) {
+        if (!isOverdue(c.due_date)) return false;
+      }
+      return true;
+    });
+  };
+
   // Triggers the AI orchestration simulation
   const handleStartAISimulation = () => {
     setSimStep(0);
@@ -834,7 +1057,6 @@ function Board() {
   useEffect(() => {
     if (!showSimModal) return;
     if (simStep >= simSteps.length) {
-      // Complete simulation and seed the board
       createSimulatedAIBoard();
       setTimeout(() => {
         setShowSimModal(false);
@@ -882,7 +1104,8 @@ function Board() {
               member_id: defaultMembers[0].id,
               member: defaultMembers[0],
               position: 1,
-              tags: [defaultTags[2]]
+              tags: [defaultTags[2]],
+              subtasks: [{ id: 1, text: 'Review prompt engineering docs', completed: true }]
             }
           ]
         },
@@ -901,7 +1124,8 @@ function Board() {
               member_id: defaultMembers[1].id,
               member: defaultMembers[1],
               position: 1,
-              tags: [defaultTags[1], defaultTags[3]]
+              tags: [defaultTags[1], defaultTags[3]],
+              subtasks: [{ id: 1, text: 'Verify Webhook Endpoints', completed: true }]
             }
           ]
         },
@@ -920,7 +1144,8 @@ function Board() {
               member_id: defaultMembers[2].id,
               member: defaultMembers[2],
               position: 1,
-              tags: [defaultTags[1]]
+              tags: [defaultTags[1]],
+              subtasks: [{ id: 1, text: 'Test localStorage state persistence', completed: true }]
             }
           ]
         }
@@ -929,6 +1154,7 @@ function Board() {
     localDB.saveBoardDetails(boardId, boardDetailsData);
     setBoards(localDB.getBoards());
     setSelectedBoardId(boardId);
+    addActivity('Hermes AI', 'generated sprint board "AI Launchpad"', 'system');
   };
 
   return (
@@ -954,6 +1180,18 @@ function Board() {
             <Play size={14} fill="currentColor" /> Simulate AI Build
           </button>
           <button 
+            className="btn btn-secondary" 
+            onClick={() => setShowActivityDrawer(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'relative' }}
+          >
+            <Activity size={16} /> Activity Log
+            {activities.length > 0 && (
+              <span style={{ backgroundColor: 'var(--accent-primary)', color: '#fff', fontSize: '10px', padding: '1px 6px', borderRadius: '10px', fontWeight: '700' }}>
+                {activities.length}
+              </span>
+            )}
+          </button>
+          <button 
             className="btn btn-secondary btn-icon" 
             onClick={() => setDarkMode(!darkMode)}
             title="Toggle theme"
@@ -971,31 +1209,134 @@ function Board() {
       </header>
 
       <div className="dashboard-container">
-        <div className="board-select-bar">
-          <div className="board-picker">
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 600 }}>Active Board:</span>
-            {boards.length > 0 ? (
-              <select 
-                className="select-dropdown" 
-                value={selectedBoardId || ''} 
-                onChange={(e) => setSelectedBoardId(Number(e.target.value))}
-              >
-                {boards.map(b => (
-                  <option key={b.id} value={b.id}>{b.name}</option>
-                ))}
-              </select>
-            ) : (
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No boards created yet</span>
+        {/* Board Select & Control Bar */}
+        <div className="board-select-bar" style={{ flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="board-picker">
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 600 }}>Active Board:</span>
+              {boards.length > 0 ? (
+                <select 
+                  className="select-dropdown" 
+                  value={selectedBoardId || ''} 
+                  onChange={(e) => setSelectedBoardId(Number(e.target.value))}
+                >
+                  {boards.map(b => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No boards created yet</span>
+              )}
+            </div>
+            {selectedBoardId && (
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <button className="btn btn-secondary" onClick={() => setShowBriefModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Sparkles size={16} className="text-primary" /> AI Sprint Brief
+                </button>
+                <button className="btn btn-secondary" onClick={() => setShowListModal(true)}>
+                  <Plus size={16} /> Add Column
+                </button>
+                <button className="btn btn-danger" onClick={handleDeleteBoard}>
+                  <Trash2 size={16} /> Delete Board
+                </button>
+              </div>
             )}
           </div>
+
+          {/* Sprint Metrics Widget */}
+          {boardDetails && (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justify: 'space-between', 
+              padding: '0.75rem 1.25rem', 
+              background: 'var(--bg-surface-soft)', 
+              borderRadius: 'var(--rounded-md)', 
+              border: '1px solid var(--border-color)',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <BarChart3 size={16} style={{ color: 'var(--accent-primary)' }} />
+                  <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)' }}>Sprint Progress:</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)' }}>{stats.percent}%</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <span>Total: <strong style={{ color: 'var(--text-primary)' }}>{stats.total}</strong></span>
+                  <span>In Progress: <strong style={{ color: '#f59e0b' }}>{stats.inProgress}</strong></span>
+                  <span>Completed: <strong style={{ color: '#10b981' }}>{stats.done}</strong></span>
+                  {stats.overdue > 0 && <span>Overdue: <strong style={{ color: '#ef4444' }}>{stats.overdue}</strong></span>}
+                </div>
+              </div>
+
+              <div style={{ flex: 1, maxWidth: '240px', minWidth: '140px', background: 'var(--bg-surface-strong)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ width: `${stats.percent}%`, backgroundColor: 'var(--accent-primary)', height: '100%', transition: 'width 0.4s ease' }} />
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Search & Filter Toolbar */}
           {selectedBoardId && (
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button className="btn btn-secondary" onClick={() => setShowListModal(true)}>
-                <Plus size={16} /> Add Column
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.25rem' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input 
+                  type="text" 
+                  placeholder="Filter tasks by title or description..." 
+                  className="form-input" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{ paddingLeft: '32px', height: '36px', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <select 
+                className="select-dropdown" 
+                value={selectedTagFilter} 
+                onChange={(e) => setSelectedTagFilter(e.target.value)}
+                style={{ height: '36px', fontSize: '0.85rem', padding: '0 0.75rem' }}
+              >
+                <option value="">All Tags</option>
+                {tags.map(t => (
+                  <option key={t.id} value={t.id}>Tag: {t.name}</option>
+                ))}
+              </select>
+
+              <select 
+                className="select-dropdown" 
+                value={selectedMemberFilter} 
+                onChange={(e) => setSelectedMemberFilter(e.target.value)}
+                style={{ height: '36px', fontSize: '0.85rem', padding: '0 0.75rem' }}
+              >
+                <option value="">All Assignees</option>
+                {members.map(m => (
+                  <option key={m.id} value={m.id}>Assignee: {m.name}</option>
+                ))}
+              </select>
+
+              <button 
+                className={`btn ${filterOverdueOnly ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => setFilterOverdueOnly(!filterOverdueOnly)}
+                style={{ height: '36px', fontSize: '0.82rem', padding: '0 0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                <AlertCircle size={14} /> Overdue Only
               </button>
-              <button className="btn btn-danger" onClick={handleDeleteBoard}>
-                <Trash2 size={16} /> Delete Board
-              </button>
+
+              {(searchQuery || selectedTagFilter || selectedMemberFilter || filterOverdueOnly) && (
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedTagFilter('');
+                    setSelectedMemberFilter('');
+                    setFilterOverdueOnly(false);
+                  }}
+                  style={{ height: '36px', fontSize: '0.82rem', padding: '0 0.75rem', color: 'var(--accent-primary)' }}
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -1006,111 +1347,156 @@ function Board() {
           </div>
         ) : boardDetails ? (
           <div className="board-canvas">
-            {boardDetails.lists && boardDetails.lists.map(list => (
-              <div 
-                key={list.id} 
-                className="board-list"
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, list.id)}
-              >
-                <div className="list-header">
-                  <div className="list-title-area">
-                    <h3 className="list-title">{list.name}</h3>
-                    <span className="card-count-badge">{list.cards ? list.cards.length : 0}</span>
-                  </div>
-                  <button 
-                    className="close-btn" 
-                    style={{ fontSize: '1rem' }} 
-                    onClick={async () => {
-                      if (window.confirm(`Delete column "${list.name}" and all its cards?`)) {
-                        if (useLocalStorage) {
-                          const details = localDB.getBoardDetails(selectedBoardId);
-                          details.lists = details.lists.filter(l => l.id !== list.id);
-                          localDB.saveBoardDetails(selectedBoardId, details);
+            {boardDetails.lists && boardDetails.lists.map((list, listIdx) => {
+              const filteredListCards = getFilteredCards(list.cards);
+              return (
+                <div 
+                  key={list.id} 
+                  className="board-list"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, list.id)}
+                >
+                  <div className="list-header">
+                    <div className="list-title-area">
+                      <h3 className="list-title">{list.name}</h3>
+                      <span className="card-count-badge">{filteredListCards.length}</span>
+                    </div>
+                    <button 
+                      className="close-btn" 
+                      style={{ fontSize: '1rem' }} 
+                      onClick={async () => {
+                        if (window.confirm(`Delete column "${list.name}" and all its cards?`)) {
+                          if (useLocalStorage) {
+                            const details = localDB.getBoardDetails(selectedBoardId);
+                            details.lists = details.lists.filter(l => l.id !== list.id);
+                            localDB.saveBoardDetails(selectedBoardId, details);
+                            fetchBoardDetails(selectedBoardId);
+                            addActivity('Workspace Lead', `deleted column "${list.name}"`, 'delete');
+                            return;
+                          }
+                          await fetch(`${API_BASE}/lists/${list.id}`, { method: 'DELETE' });
                           fetchBoardDetails(selectedBoardId);
-                          return;
+                          addActivity('Workspace Lead', `deleted column "${list.name}"`, 'delete');
                         }
-                        await fetch(`${API_BASE}/lists/${list.id}`, { method: 'DELETE' });
-                        fetchBoardDetails(selectedBoardId);
-                      }
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="list-cards-container">
-                  <AnimatePresence>
-                    {list.cards && list.cards.map(card => {
-                      const overdue = isOverdue(card.due_date);
-                      return (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          layoutId={`card-${card.id}`}
-                          key={card.id} 
-                          className={`kanban-card ${overdue ? 'overdue' : ''}`}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, card)}
-                          onClick={() => openEditCardModal(card)}
-                        >
-                          <GripVertical size={14} className="drag-handle" style={{ display: 'none' }} />
-                          {card.tags && card.tags.length > 0 && (
-                            <div className="card-tags">
-                              {card.tags.map(t => (
-                                <span 
-                                  key={t.id} 
-                                  className="tag-badge"
-                                  style={{ backgroundColor: t.color + '22', color: t.color, border: `1px solid ${t.color}44` }}
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="list-cards-container">
+                    <AnimatePresence>
+                      {filteredListCards.map(card => {
+                        const overdue = isOverdue(card.due_date);
+                        const subtasks = card.subtasks || [];
+                        const completedSubtasks = subtasks.filter(st => st.completed).length;
+
+                        return (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            layoutId={`card-${card.id}`}
+                            key={card.id} 
+                            className={`kanban-card ${overdue ? 'overdue' : ''}`}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, card)}
+                            onClick={() => openEditCardModal(card)}
+                            style={{ position: 'relative' }}
+                          >
+                            <div className="card-hover-actions" style={{ position: 'absolute', right: '8px', top: '8px', display: 'flex', gap: '4px', opacity: 0.8 }}>
+                              {listIdx > 0 && (
+                                <button 
+                                  title="Move to previous column"
+                                  onClick={(e) => handleMoveCardStep(card, 'prev', e)}
+                                  style={{ border: 'none', background: 'var(--bg-surface-strong)', padding: '2px 4px', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-secondary)' }}
                                 >
-                                  {t.name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <h4 className="card-title">{card.title}</h4>
-                          {card.description && (
-                            <p className="card-desc-preview">{card.description}</p>
-                          )}
-                          <div className="card-meta">
-                            <div className={`card-due-date ${overdue ? 'alert' : ''}`}>
-                              {card.due_date ? (
-                                <>
-                                  <Calendar size={12} />
-                                  <span>{new Date(card.due_date).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
-                                  {overdue && <span style={{ marginLeft: '4px', fontSize: '0.65rem', textTransform: 'uppercase' }}>(Overdue)</span>}
-                                </>
-                              ) : (
-                                <span style={{ color: 'var(--text-muted)' }}>No due date</span>
+                                  <ChevronLeft size={14} />
+                                </button>
+                              )}
+                              {listIdx < boardDetails.lists.length - 1 && (
+                                <button 
+                                  title="Move to next column"
+                                  onClick={(e) => handleMoveCardStep(card, 'next', e)}
+                                  style={{ border: 'none', background: 'var(--bg-surface-strong)', padding: '2px 4px', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-secondary)' }}
+                                >
+                                  <ChevronRight size={14} />
+                                </button>
                               )}
                             </div>
-                            {card.member && (
-                              <div 
-                                className="member-avatar" 
-                                style={{ backgroundColor: card.member.avatar_color }}
-                                title={card.member.name}
-                              >
-                                {getInitials(card.member.name)}
+
+                            {card.tags && card.tags.length > 0 && (
+                              <div className="card-tags">
+                                {card.tags.map(t => (
+                                  <span 
+                                    key={t.id} 
+                                    className="tag-badge"
+                                    style={{ backgroundColor: t.color + '22', color: t.color, border: `1px solid ${t.color}44` }}
+                                  >
+                                    {t.name}
+                                  </span>
+                                ))}
                               </div>
                             )}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                  {(!list.cards || list.cards.length === 0) && (
-                    <div className="placeholder-card kanban-card">
-                      Drop cards here
-                    </div>
-                  )}
+                            <h4 className="card-title">{card.title}</h4>
+                            {card.description && (
+                              <p className="card-desc-preview">{card.description}</p>
+                            )}
+
+                            {/* Subtask Checklist Summary */}
+                            {subtasks.length > 0 && (
+                              <div style={{ marginTop: '0.6rem', padding: '0.4rem 0.6rem', background: 'var(--bg-surface-soft)', borderRadius: '4px', fontSize: '0.75rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <CheckSquare size={12} /> {completedSubtasks}/{subtasks.length} Subtasks
+                                  </span>
+                                  <span>{Math.round((completedSubtasks / subtasks.length) * 100)}%</span>
+                                </div>
+                                <div style={{ height: '4px', background: 'var(--border-color)', borderRadius: '2px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${(completedSubtasks / subtasks.length) * 100}%`, height: '100%', backgroundColor: '#10b981' }} />
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="card-meta" style={{ marginTop: '0.75rem' }}>
+                              <div className={`card-due-date ${overdue ? 'alert' : ''}`}>
+                                {card.due_date ? (
+                                  <>
+                                    <Calendar size={12} />
+                                    <span>{new Date(card.due_date).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                                    {overdue && <span style={{ marginLeft: '4px', fontSize: '0.65rem', textTransform: 'uppercase' }}>(Overdue)</span>}
+                                  </>
+                                ) : (
+                                  <span style={{ color: 'var(--text-muted)' }}>No due date</span>
+                                )}
+                              </div>
+                              {card.member && (
+                                <div 
+                                  className="member-avatar" 
+                                  style={{ backgroundColor: card.member.avatar_color }}
+                                  title={card.member.name}
+                                >
+                                  {getInitials(card.member.name)}
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </AnimatePresence>
+                    {filteredListCards.length === 0 && (
+                      <div className="placeholder-card kanban-card">
+                        No cards match filter
+                      </div>
+                    )}
+                  </div>
+                  <div className="list-footer">
+                    <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => openCreateCardModal(list.id)}>
+                      <Plus size={16} /> Add Card
+                    </button>
+                  </div>
                 </div>
-                <div className="list-footer">
-                  <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => openCreateCardModal(list.id)}>
-                    <Plus size={16} /> Add Card
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">
@@ -1123,6 +1509,95 @@ function Board() {
           </div>
         )}
       </div>
+
+      {/* Slide-over Activity Log Drawer */}
+      <AnimatePresence>
+        {showActivityDrawer && (
+          <div className="modal-overlay" style={{ justifyContent: 'flex-end', background: 'rgba(0,0,0,0.3)' }} onClick={() => setShowActivityDrawer(false)}>
+            <motion.div 
+              initial={{ x: '100%' }} 
+              animate={{ x: 0 }} 
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{ width: '100%', maxWidth: '420px', height: '100vh', background: 'var(--bg-surface)', borderLeft: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', padding: '1.5rem', boxShadow: 'var(--glass-shadow)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Activity size={20} className="text-primary" />
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>Workspace Activities</h3>
+                </div>
+                <button className="close-btn" onClick={() => setShowActivityDrawer(false)}>✕</button>
+              </div>
+
+              {/* Add Activity Note */}
+              <form onSubmit={handleAddActivityNote} style={{ marginBottom: '1rem', display: 'flex', gap: '6px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Post team update / activity note..."
+                  className="form-input"
+                  value={newActivityNote}
+                  onChange={(e) => setNewActivityNote(e.target.value)}
+                  style={{ fontSize: '0.85rem' }}
+                />
+                <button type="submit" className="btn btn-primary" style={{ padding: '0 0.75rem' }}>
+                  <Send size={14} />
+                </button>
+              </form>
+
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {activities.map((act) => (
+                  <div key={act.id} style={{ padding: '0.75rem', borderRadius: 'var(--rounded-sm)', background: 'var(--bg-surface-soft)', border: '1px solid var(--border-color-soft)', fontSize: '0.85rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <strong style={{ color: 'var(--text-primary)' }}>{act.user}</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{act.time}</span>
+                    </div>
+                    <p style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>{act.text}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* AI Sprint Brief Modal */}
+      <AnimatePresence>
+        {showBriefModal && (
+          <div className="modal-overlay" onClick={() => setShowBriefModal(false)}>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="modal-content"
+              style={{ maxWidth: '520px' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={20} style={{ color: 'var(--accent-primary)' }} />
+                  <h3 className="modal-title">AI Sprint Digest</h3>
+                </div>
+                <button className="close-btn" onClick={() => setShowBriefModal(false)}>✕</button>
+              </div>
+              <div style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
+                <p style={{ marginBottom: '1rem' }}>
+                  🤖 <strong>Hermes Workspace Intelligence Report:</strong>
+                </p>
+                <div style={{ background: 'var(--bg-surface-soft)', padding: '1rem', borderRadius: 'var(--rounded-md)', border: '1px solid var(--border-color)', marginBottom: '1rem' }}>
+                  <div style={{ marginBottom: '0.5rem' }}>• 📊 <strong>Overall Progress:</strong> {stats.percent}% of sprint objectives completed ({stats.done}/{stats.total} cards).</div>
+                  <div style={{ marginBottom: '0.5rem' }}>• ⚡ <strong>Active Stream:</strong> {stats.inProgress} tasks are currently under active development.</div>
+                  <div>• 🚨 <strong>Attention Needed:</strong> {stats.overdue > 0 ? `${stats.overdue} tasks require immediate resolution as they are past due.` : 'Zero overdue tasks! Sprint pace is optimal.'}</div>
+                </div>
+                <p>Recommendations: Maintain current pull-request review velocity and verify staging deployment before release.</p>
+              </div>
+              <div className="modal-actions" style={{ justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+                <button className="btn btn-primary" onClick={() => setShowBriefModal(false)}>Acknowledge Brief</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Board Create Modal */}
       <AnimatePresence>
@@ -1206,6 +1681,7 @@ function Board() {
               exit={{ scale: 0.9, opacity: 0 }}
               className="modal-content" 
               onSubmit={handleSaveCard}
+              style={{ maxWidth: '580px' }}
             >
               <div className="modal-header">
                 <h3 className="modal-title">{selectedCard ? 'Edit Card' : 'Create Card'}</h3>
@@ -1232,6 +1708,53 @@ function Board() {
                   value={cardForm.description} 
                   onChange={(e) => setCardForm({ ...cardForm, description: e.target.value })}
                 />
+              </div>
+
+              {/* Subtasks Checklist Manager inside Card Modal */}
+              <div className="form-group">
+                <label className="form-label">Subtasks & Checklist</label>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '0.5rem' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Add a subtask step..." 
+                    className="form-input"
+                    value={newSubtaskInput}
+                    onChange={(e) => setNewSubtaskInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSubtask(); } }}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                  <button type="button" className="btn btn-secondary" onClick={handleAddSubtask}>
+                    <Plus size={14} />
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '140px', overflowY: 'auto' }}>
+                  {(cardForm.subtasks || []).map(st => (
+                    <div key={st.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px', background: 'var(--bg-surface-soft)', borderRadius: '4px', fontSize: '0.85rem' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={st.completed}
+                        onChange={() => {
+                          const updated = cardForm.subtasks.map(s => s.id === st.id ? { ...s, completed: !s.completed } : s);
+                          setCardForm({ ...cardForm, subtasks: updated });
+                        }}
+                      />
+                      <span style={{ textDecoration: st.completed ? 'line-through' : 'none', color: st.completed ? 'var(--text-muted)' : 'var(--text-primary)', flex: 1 }}>
+                        {st.text}
+                      </span>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const updated = cardForm.subtasks.filter(s => s.id !== st.id);
+                          setCardForm({ ...cardForm, subtasks: updated });
+                        }}
+                        style={{ border: 'none', background: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="form-group">
