@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import AgenticIdeMockup from '../components/AgenticIdeMockup';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Plus, Trash2, Calendar, User, CheckCircle2, GripVertical, 
@@ -69,68 +68,6 @@ const localDB = {
                 subtasks: [
                   { id: 1, text: 'Verify Bot Token Scopes', completed: true },
                   { id: 2, text: 'Hook Socket Mode listeners', completed: false }
-                ]
-              },
-              {
-                id: 305,
-                board_list_id: 201,
-                title: 'Setup CI/CD GitHub Actions Workflow',
-                description: 'Configure automated linting, test suite execution, and Render deployment triggers on push to main branch.',
-                due_date: new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[3].id,
-                member: defaultMembers[3],
-                position: 3,
-                tags: [defaultTags[1], defaultTags[3]],
-                subtasks: [
-                  { id: 1, text: 'Write .github/workflows/deploy.yml', completed: true },
-                  { id: 2, text: 'Configure Render deployment webhook secrets', completed: false },
-                  { id: 3, text: 'Verify automated pull request checks', completed: false }
-                ]
-              },
-              {
-                id: 306,
-                board_list_id: 201,
-                title: 'Implement OAuth2 & JWT Auth Guard',
-                description: 'Add secure authentication flow using Laravel Sanctum and React OAuth SSO login.',
-                due_date: new Date(Date.now() + 4 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[0].id,
-                member: defaultMembers[0],
-                position: 4,
-                tags: [defaultTags[1], defaultTags[2]],
-                subtasks: [
-                  { id: 1, text: 'Install Laravel Sanctum package', completed: true },
-                  { id: 2, text: 'Create AuthController login & register endpoints', completed: false },
-                  { id: 3, text: 'Add JWT interceptors in React frontend', completed: false }
-                ]
-              },
-              {
-                id: 307,
-                board_list_id: 201,
-                title: 'Lighthouse Performance & Asset Optimization',
-                description: 'Optimize bundle size, leverage Gzip compression, and target a 95+ score on Google Lighthouse.',
-                due_date: new Date(Date.now() + 5 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[1].id,
-                member: defaultMembers[1],
-                position: 5,
-                tags: [defaultTags[2], defaultTags[3]],
-                subtasks: [
-                  { id: 1, text: 'Audit vendor chunk sizes', completed: true },
-                  { id: 2, text: 'Enable asset compression in Vite build', completed: false }
-                ]
-              },
-              {
-                id: 308,
-                board_list_id: 201,
-                title: 'Websocket Real-Time Collaboration Engine',
-                description: 'Set up WebSocket event broadcasting so board changes reflect immediately across open browsers.',
-                due_date: new Date(Date.now() + 6 * 24 * 3600 * 1000).toISOString(),
-                member_id: defaultMembers[2].id,
-                member: defaultMembers[2],
-                position: 6,
-                tags: [defaultTags[1]],
-                subtasks: [
-                  { id: 1, text: 'Configure Laravel Echo listener', completed: false },
-                  { id: 2, text: 'Broadcast CardMoved & CardCreated events', completed: false }
                 ]
               }
             ]
@@ -513,68 +450,6 @@ function Board() {
                   subtasks: [
                     { id: 1, text: 'Verify Bot Token Scopes', completed: true },
                     { id: 2, text: 'Hook Socket Mode listeners', completed: false }
-                  ]
-                },
-                {
-                  id: 305,
-                  board_list_id: 201,
-                  title: 'Setup CI/CD GitHub Actions Workflow',
-                  description: 'Configure automated linting, test suite execution, and Render deployment triggers on push to main branch.',
-                  due_date: new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[3].id,
-                  member: defaultMembers[3],
-                  position: 3,
-                  tags: [defaultTags[1], defaultTags[3]],
-                  subtasks: [
-                    { id: 1, text: 'Write .github/workflows/deploy.yml', completed: true },
-                    { id: 2, text: 'Configure Render deployment webhook secrets', completed: false },
-                    { id: 3, text: 'Verify automated pull request checks', completed: false }
-                  ]
-                },
-                {
-                  id: 306,
-                  board_list_id: 201,
-                  title: 'Implement OAuth2 & JWT Auth Guard',
-                  description: 'Add secure authentication flow using Laravel Sanctum and React OAuth SSO login.',
-                  due_date: new Date(Date.now() + 4 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[0].id,
-                  member: defaultMembers[0],
-                  position: 4,
-                  tags: [defaultTags[1], defaultTags[2]],
-                  subtasks: [
-                    { id: 1, text: 'Install Laravel Sanctum package', completed: true },
-                    { id: 2, text: 'Create AuthController login & register endpoints', completed: false },
-                    { id: 3, text: 'Add JWT interceptors in React frontend', completed: false }
-                  ]
-                },
-                {
-                  id: 307,
-                  board_list_id: 201,
-                  title: 'Lighthouse Performance & Asset Optimization',
-                  description: 'Optimize bundle size, leverage Gzip compression, and target a 95+ score on Google Lighthouse.',
-                  due_date: new Date(Date.now() + 5 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[1].id,
-                  member: defaultMembers[1],
-                  position: 5,
-                  tags: [defaultTags[2], defaultTags[3]],
-                  subtasks: [
-                    { id: 1, text: 'Audit vendor chunk sizes', completed: true },
-                    { id: 2, text: 'Enable asset compression in Vite build', completed: false }
-                  ]
-                },
-                {
-                  id: 308,
-                  board_list_id: 201,
-                  title: 'Websocket Real-Time Collaboration Engine',
-                  description: 'Set up WebSocket event broadcasting so board changes reflect immediately across open browsers.',
-                  due_date: new Date(Date.now() + 6 * 24 * 3600 * 1000).toISOString(),
-                  member_id: defaultMembers[2].id,
-                  member: defaultMembers[2],
-                  position: 6,
-                  tags: [defaultTags[1]],
-                  subtasks: [
-                    { id: 1, text: 'Configure Laravel Echo listener', completed: false },
-                    { id: 2, text: 'Broadcast CardMoved & CardCreated events', completed: false }
                   ]
                 }
               ]
@@ -2020,16 +1895,73 @@ function Board() {
       {/* AI Orchestration Simulation Modal */}
       <AnimatePresence>
         {showSimModal && (
-          <div className="modal-overlay" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }} onClick={() => setShowSimModal(false)}>
+          <div className="modal-overlay" style={{ backgroundColor: 'rgba(38, 37, 30, 0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setShowSimModal(false)}>
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               exit={{ scale: 0.95, opacity: 0 }}
               className="modal-content"
-              style={{ maxWidth: '1000px', padding: '0', overflow: 'hidden', border: '1px solid var(--accent-primary)', boxShadow: '0 0 40px rgba(245, 78, 0, 0.25)' }}
+              style={{ maxWidth: '640px', padding: '0', overflow: 'hidden', border: '1px solid var(--accent-primary)', boxShadow: '0 0 30px rgba(245, 78, 0, 0.15)' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <AgenticIdeMockup autoPlay={true} />
+              <div className="ide-header" style={{ padding: '0.75rem 1.5rem', background: 'var(--bg-surface-soft)', borderBottom: '1px solid var(--border-color)' }}>
+                <div className="ide-dot" style={{ backgroundColor: '#ff5f56' }}></div>
+                <div className="ide-dot" style={{ backgroundColor: '#ffbd2e' }}></div>
+                <div className="ide-dot" style={{ backgroundColor: '#27c93f' }}></div>
+                <div className="ide-title" style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 0 0 1rem', fontFamily: 'var(--font-mono)' }}>
+                  <Terminal size={14} className="text-primary" /> slack-socket-agent-orchestrator.log
+                </div>
+              </div>
+              
+              <div style={{ height: '360px', overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--bg-surface)' }}>
+                {simSteps.slice(0, simStep + 1).map((step, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ 
+                      border: '1px solid var(--border-color)', 
+                      borderRadius: '8px', 
+                      background: 'var(--bg-surface-soft)',
+                      padding: '0.75rem 1rem'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', borderBottom: '1px solid var(--border-color-soft)', paddingBottom: '0.25rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ 
+                          width: '24px', 
+                          height: '24px', 
+                          borderRadius: '4px', 
+                          background: 'var(--accent-primary)', 
+                          color: '#fff', 
+                          fontWeight: '700', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          fontSize: '11px'
+                        }}>
+                          {step.avatar}
+                        </span>
+                        <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)' }}>{step.sender}</span>
+                      </div>
+                      <span className={`timeline-pill timeline-pill-${step.status}`} style={{ fontSize: '9px', padding: '2px 6px' }}>{step.status}</span>
+                    </div>
+                    <p style={{ fontSize: '13px', lineHeight: '1.4', color: 'var(--text-secondary)', fontFamily: step.status === 'grep' || step.status === 'edit' || step.status === 'done' ? 'var(--font-mono)' : 'var(--font-sans)' }}>
+                      {step.text}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div style={{ padding: '1rem 1.5rem', background: 'var(--bg-surface-soft)', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  {simStep < simSteps.length ? '🤖 Agent compiling workspace...' : '✅ Compilation done!'}
+                </span>
+                <span className="timeline-pill timeline-pill-thinking" style={{ animation: simStep < simSteps.length ? 'pulse 1s infinite' : 'none' }}>
+                  {simStep < simSteps.length ? 'BUILDING' : 'READY'}
+                </span>
+              </div>
             </motion.div>
           </div>
         )}

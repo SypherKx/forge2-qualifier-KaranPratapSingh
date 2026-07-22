@@ -6,6 +6,22 @@ This project was built entirely by orchestrating a team of two AI agents (**Herm
 
 ---
 
+## 📹 Evidence Walkthrough Video
+
+> [!IMPORTANT]
+> **Evaluators & Reviewers**: The full screen-recording demonstration video for submission guidelines is located inside the repository at:
+> 
+> 📁 **[evidence/walkthrough.mp4](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/evidence/walkthrough.mp4)** (32.7 MB)
+> 
+> **Demonstrates**:
+> 1. ✅ **Demo Board Seeding**: Pre-populated card initialization.
+> 2. ✅ **Fluid Swimlane Drag & Drop**: Card movement across `To Do`, `In Progress`, and `Done`.
+> 3. ✅ **Card Customization**: Tag toggles, assignee assignment, and due date picking.
+> 4. ✅ **Overdue Date Flagging**: Red boundary highlights denoting past due tasks.
+> 5. ✅ **Board & Column Management**: Multi-board creation and column customization.
+
+---
+
 ## Core Features
 
 -   **Multi-Board Workspace**: Create, switch, and delete boards.
