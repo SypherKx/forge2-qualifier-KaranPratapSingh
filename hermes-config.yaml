@@ -1,0 +1,23 @@
+model:
+  provider: "gemini"
+  default: "gemini-2.5-flash"
+  fallback_chain:
+    - "groq/openai/gpt-oss-120b"
+    - "ollama/qwen2.5-coder"
+
+gateway:
+  slack:
+    enabled: true
+    channels:
+      sprint_main: "#sprint-main"
+      agent_coder: "#agent-coder"
+      agent_log: "#agent-log"
+
+skills:
+  directory: "./skills"
+  preloaded:
+    - "status-report"
+
+memory:
+  enabled: true
+  path: "./memory"

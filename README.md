@@ -1,0 +1,97 @@
+# AgileBoard - A Premium AI-Orchestrated Kanban Board by Karan Pratap Singh
+
+AgileBoard is a collaborative, Trello-style Kanban board application. It features a modern Light/Dark mode glassmorphic user interface inspired by the **Cursor developer brand guidelines** (warm cream editorial canvas, dark slate theme, hairline depth, and Cursor Orange accents) built with React (Vite) and backed by a robust REST API built with Laravel (PHP 8.3 & SQLite).
+
+This project was built entirely by orchestrating a team of two AI agents (**Hermes** & **OpenClaw**) wired through Slack sockets.
+
+---
+
+## Core Features
+
+-   **Multi-Board Workspace**: Create, switch, and delete boards.
+-   **Structured Columns (Swimlanes)**: Boards start with `To Do`, `In Progress`, and `Done` lists. Add new columns dynamically.
+-   **Interactive Cards**: Create, edit, and delete cards within lists.
+-   **Interactive Drag-and-Drop**: Drag cards between lists using HTML5 drag-and-drop actions.
+-   **Task Assignment**: Add board members and assign cards.
+-   **Categorization Tags**: Create colored tags and toggle them on cards.
+-   **Due Date Tracking**: Select a due date/time. Overdue tasks are highlighted with a soft crimson boundary glow.
+-   **Theme Toggle**: Toggle between **Warm Cream (Light)** and **Premium Slate (Dark)** themes.
+-   **Built-in LocalStorage Fallback**: Fully functional Offline Mode that detects backend offline state and saves all data to local browser storage automatically.
+-   **AI Agent Build Simulation**: An interactive in-workspace simulation demonstrating Hermes & OpenClaw planning, editing, and compiling the board inside Slack in real-time.
+
+---
+
+## Tech Stack & Configuration Files
+
+-   **Backend**: Laravel (PHP 8.3), SQLite Database, Eloquent ORM.
+-   **Frontend**: React 19 (Vite), Vanilla CSS (Custom Glassmorphism, Google Fonts).
+-   **Orchestration Config**: [hermes-config.yaml](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/hermes-config.yaml) and [openclaw.json](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/openclaw.json) (No secrets hardcoded, all credentials loaded from host environment).
+-   **Agent Work Logs**: Read [agent-log.md](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/agent-log.md) for the unedited task execution trace.
+-   **Agent Skills**: Configured under the [skills/status-report](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/skills/status-report) folder.
+
+---
+
+## Model Routing Rationale
+
+All models used in this build are 100% free:
+
+1.  **Hermes (Brain / Planning)**: Guided by **Google Gemini 2.5 Flash** & **Groq gpt-oss-120b**.
+    *   *Why*: Gemini and Groq's high-tier models have outstanding logic structure and zero-shot reasoning. This is crucial for Hermes to break down abstract user goals into task files.
+2.  **OpenClaw (Hands / Execution)**: Guided by **Ollama qwen2.5-coder** (local) & **Groq llama-3.3-70b-versatile**.
+    *   *Why*: Local Ollama execution offers unlimited token throughput, bypassing API rate limit thresholds, while Groq provides extremely fast compilation and syntax validation checks.
+
+---
+
+## Local Run Instructions
+
+### 1. Launch the Frontend (Includes Offline Mode & Simulation)
+Since the app features a built-in LocalStorage fallback database, you can run the entire frontend immediately without setting up PHP or Laravel locally:
+
+1. Navigate to the `/frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install npm packages (skips large Puppeteer downloads for speed):
+   ```bash
+   $env:PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+   npm install --no-audit --no-fund
+   ```
+3. Start the Vite dev server:
+   ```bash
+   npm run dev
+   ```
+4. Open `http://localhost:5173/` in your browser.
+5. Inside the Workspace, click **"Seed Demo Board"** to populate lists or click **"🤖 Simulate AI Build"** to run the agent compile simulation.
+
+### 2. Launch the Backend API (Optional)
+If you have PHP 8.2+ and Composer installed:
+
+1. Navigate to the `/backend` directory:
+   ```bash
+   cd backend
+   ```
+2. Copy the environment template:
+   ```bash
+   copy .env.example .env
+   ```
+3. Generate the application key:
+   ```bash
+   php artisan key:generate
+   ```
+4. Run the database migrations (creates the SQLite database and tables):
+   ```bash
+   php artisan migrate
+   ```
+5. Start the local development server:
+   ```bash
+   php artisan serve
+   ```
+   The API will now be running at `http://127.0.0.1:8000`.
+
+---
+
+## Live Deployments
+
+-   **Frontend**: Run locally (e.g., `http://localhost:5173`)
+-   **Backend API**: Run locally (e.g., `http://127.0.0.1:8000`)
+-   **Owner / Author**: Karan Pratap Singh

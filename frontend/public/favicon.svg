@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
+  <!-- Rounded container in Ink dark slate -->
+  <rect width="44" height="44" x="2" y="2" rx="10" fill="#26251e"/>
+  
+  <!-- Code chevron prompt in Cursor Orange -->
+  <path d="M16 14L26 24L16 34" stroke="#f54e00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Cursor flashing block in Warm Cream -->
+  <rect x="29" y="30" width="8" height="4" rx="1" fill="#f7f7f4">
+    <animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="indefinite" />
+  </rect>
+</svg>

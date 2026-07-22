@@ -1,0 +1,30 @@
+{
+  "profile": "default",
+  "gateway": {
+    "port": 19000,
+    "host": "127.0.0.1"
+  },
+  "channels": {
+    "slack": {
+      "enabled": true,
+      "mode": "socket",
+      "appToken": { "source": "env", "provider": "default", "id": "SLACK_APP_TOKEN" },
+      "botToken": { "source": "env", "provider": "default", "id": "SLACK_BOT_TOKEN" }
+    }
+  },
+  "models": {
+    "default": "groq/llama-3.3-70b-versatile",
+    "providers": {
+      "groq": {
+        "apiKey": { "source": "env", "provider": "default", "id": "GROQ_API_KEY" }
+      },
+      "ollama": {
+        "baseUrl": "http://localhost:11434/v1"
+      }
+    }
+  },
+  "execution": {
+    "policy": "approval_required",
+    "workspaceDir": "./"
+  }
+}

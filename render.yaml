@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: forge2-laravel-api
+    env: docker
+    rootDir: backend
+    plan: free
+    envVars:
+      - key: APP_NAME
+        value: "AgileBoard"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: "https://forge2-laravel-api.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forge2-db
+          property: connectionString
+
+databases:
+  - name: forge2-db
+    databaseName: agileboard
+    user: admin
+    plan: free

@@ -1,0 +1,17 @@
+# Root ignore rules
+.env
+.env.local
+.env.*.local
+
+# Playwright Recorder files
+node_modules/
+package.json
+package-lock.json
+record.js
+evidence/raw_videos/
+
+# IDEs and System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
