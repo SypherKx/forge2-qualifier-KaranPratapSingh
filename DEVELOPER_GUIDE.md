@@ -99,23 +99,21 @@ All backend API endpoints are prefix-scoped to `/api`:
 ### 1. `frontend/src/pages/LandingPage.jsx`
 - **Purpose**: Main entry landing page (`/`).
 - **Key Sections**: Top Nav, Hero Title, Animated IDE Mockup, Designed Features Grid, AI Timeline Blueprint, Database Mode Comparison, and Functional Footer.
-- **State**: Dark mode theme toggle (`darkMode`), responsive navigation.
 
-### 2. `frontend/src/components/AnimatedIdeMockup.jsx`
-- **Purpose**: Real-time auto-typing AI pair-programming simulation on the landing page.
-- **Key Features**:
-  - Auto-typing engine with blinking cursor (`|`) and syntax highlighting.
-  - Multi-agent dialogue log (`Hermes`, `OpenClaw`, `System`).
-  - Active file explorer highlighting.
-  - Controls: Play/Pause, Reset, Speed Multiplier (1x/2x), and Step Tab selectors.
+### 2. `frontend/src/pages/Board.jsx`
+- **Purpose**: Main Kanban workspace controller (`/board`).
+- **Role**: Manages API state, offline LocalStorage fallback, filter calculations, and delegates rendering to subcomponents.
 
-### 3. `frontend/src/pages/Board.jsx`
-- **Purpose**: Full Kanban workspace (`/board`).
-- **Key Features**:
-  - HTML5 Drag and Drop card reordering across swimlanes.
-  - Card CRUD modal (Title, Description, Due Date, Member Assignees, Tag Badges).
-  - Overdue date detection with soft crimson boundary glow.
-  - Dual Mode: Communicates with Laravel API backend or falls back to `localStorage`.
+### 3. Modular Subcomponents (`frontend/src/components/`)
+- **`AnimatedIdeMockup.jsx`**: Auto-typing code engine, multi-agent chat log, speed toggle & step tabs.
+- **`BoardHeader.jsx`**: Top navigation bar, board picker, seed demo button, search/filter inputs, and theme toggle.
+- **`KanbanColumn.jsx`**: Individual swimlane column container with card count badge and drag target event listeners.
+- **`KanbanCard.jsx`**: Draggable task card with tags, member avatars, due date alert indicator, and click handlers.
+- **`CardModal.jsx`**: Dialog for creating and editing task cards, assigning tags/members, and date picking.
+- **`BoardModal.jsx`**: Dialog for creating a new board.
+- **`ColumnModal.jsx`**: Dialog for adding a new swimlane column.
+- **`MemberModal.jsx`**: Dialog for adding a new team member.
+- **`ActivityDrawer.jsx`**: Side drawer for viewing real-time system logs and posting team notes.
 
 ### 4. `frontend/src/index.css`
 - **Design System**: Built around the Cursor brand guidelines.
