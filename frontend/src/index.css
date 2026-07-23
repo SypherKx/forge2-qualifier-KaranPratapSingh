@@ -1154,6 +1154,12 @@ body {
   color: var(--accent-primary);
 }
 
+.footer-link-text {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 /* AI Orchestration timeline section */
 .timeline-section {
   max-width: 1000px;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Zap, Users, Shield, ArrowRight, Code, MessageSquare, Terminal, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Zap, Users, Shield, ArrowRight, Code, MessageSquare, Terminal, Sun, Moon, Globe, ExternalLink } from 'lucide-react';
 import AnimatedIdeMockup from '../components/AnimatedIdeMockup';
 
 export default function LandingPage() {
@@ -207,50 +207,80 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* Footer */}
+      {/* Useful & Functional Footer */}
       <footer className="landing-footer">
         <div className="landing-footer-grid">
+          {/* Column 1: Brand & Status */}
           <div className="footer-column">
-            <div className="footer-column-title">Product</div>
-            <a href="#" className="footer-link">Features</a>
-            <a href="#" className="footer-link">Security</a>
-            <a href="#" className="footer-link">Pricing</a>
-            <a href="#" className="footer-link">Localhost</a>
+            <div className="brand" style={{ marginBottom: '0.5rem' }}>
+              <span className="brand-logo">AgileBoard</span>
+              <span className="brand-tag">v2.0</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+              High-performance Kanban workspace built with editorial calm for developers.
+            </p>
+            <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-primary)' }}>
+              <span className="live-dot" />
+              <span style={{ fontWeight: 500 }}>System Status: Operational</span>
+            </div>
           </div>
+
+          {/* Column 2: Workspace Navigation */}
           <div className="footer-column">
-            <div className="footer-column-title">Resources</div>
-            <a href="#" className="footer-link">Documentation</a>
-            <a href="#" className="footer-link">Changelog</a>
-            <a href="#" className="footer-link">API Reference</a>
-            <a href="#" className="footer-link">GitHub</a>
-          </div>
-          <div className="footer-column">
-            <div className="footer-column-title">Company</div>
-            <a href="#" className="footer-link">About Us</a>
-            <a href="#" className="footer-link">Blog</a>
-            <a href="#" className="footer-link">Careers</a>
-            <a href="#" className="footer-link">Press Kit</a>
-          </div>
-          <div className="footer-column">
-            <div className="footer-column-title">Support</div>
-            <a href="#" className="footer-link">Help Center</a>
-            <a href="#" className="footer-link">Contact Support</a>
-            <a href="#" className="footer-link">Developer Forum</a>
-            <a href="#" className="footer-link">Status Page</a>
-          </div>
-          <div className="footer-column">
-            <div className="footer-column-title">AgileBoard</div>
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-              Built for the Forge 2 Qualifier.<br />
-              Designed by Karan Pratap Singh.
+            <div className="footer-column-title">Workspace Navigation</div>
+            <span className="footer-link" style={{ cursor: 'pointer' }} onClick={() => navigate('/board')}>Open Kanban Board</span>
+            <a href="#features" className="footer-link">Core Features</a>
+            <a href="#timeline" className="footer-link">AI Blueprint Timeline</a>
+            <span className="footer-link" style={{ cursor: 'pointer' }} onClick={() => setDarkMode(!darkMode)}>
+              Toggle Theme ({darkMode ? 'Light' : 'Dark'})
             </span>
           </div>
+
+          {/* Column 3: Tech Architecture */}
+          <div className="footer-column">
+            <div className="footer-column-title">Tech Stack</div>
+            <span className="footer-link-text">⚡ React 19 + Vite</span>
+            <span className="footer-link-text">🐘 Laravel 11 (PHP 8.3)</span>
+            <span className="footer-link-text">🗄️ SQLite Store & Offline Mode</span>
+            <span className="footer-link-text">🎨 Custom Glassmorphic CSS</span>
+          </div>
+
+          {/* Column 4: AI Agents */}
+          <div className="footer-column">
+            <div className="footer-column-title">Autonomous Agents</div>
+            <span className="footer-link-text">🧠 <strong>Hermes</strong> (Brain & Planner)</span>
+            <span className="footer-link-text">⚡ <strong>OpenClaw</strong> (Autonomous Coder)</span>
+            <span className="footer-link-text">💬 Slack Socket Orchestration</span>
+            <span className="footer-link-text">📊 100% Autonomous Code Gen</span>
+          </div>
+
+          {/* Column 5: Submission & Repos */}
+          <div className="footer-column">
+            <div className="footer-column-title">Project Links</div>
+            <a href="https://github.com/SypherKx/forge2-qualifier-KaranPratapSingh" target="_blank" rel="noreferrer" className="footer-link" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Globe size={14} /> GitHub Repository
+            </a>
+            <a href="https://forage2karan.vercel.app" target="_blank" rel="noreferrer" className="footer-link" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <ExternalLink size={14} /> Live Vercel Deploy
+            </a>
+            <div style={{ marginTop: '0.75rem', fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+              Built for <strong>Forage 2 Qualifier</strong><br />
+              Designed by <strong>Karan Pratap Singh</strong>
+            </div>
+          </div>
         </div>
-        <div style={{ borderTop: '1px solid var(--border-color-soft)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)' }}>
+
+        <div style={{ borderTop: '1px solid var(--border-color-soft)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', fontSize: '13px', color: 'var(--text-muted)' }}>
           <span>&copy; {new Date().getFullYear()} AgileBoard. All rights reserved.</span>
-          <span>Designed with Editorial Calm</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <span>Designed with Editorial Calm</span>
+            <span style={{ cursor: 'pointer', color: 'var(--accent-primary)', fontWeight: 500 }} onClick={() => navigate('/board')}>
+              Open Workspace →
+            </span>
+          </div>
         </div>
       </footer>
     </div>
   );
 }
+
