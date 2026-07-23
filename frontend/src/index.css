@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* ==========================================================================
+   AGILEBOARD DESIGN SYSTEM & STYLESHEET INDEX
+   ==========================================================================
+   1. CORE DESIGN TOKENS & THEMING (:root & body.dark-theme)
+   2. GLOBAL RESET & TYPOGRAPHY
+   3. APP HEADER, BRANDING & BUTTONS
+   4. KANBAN WORKSPACE, SWIMLANES & CARDS
+   5. MODALS, FORMS & TAG SELECTORS
+   6. LANDING PAGE HERO & FEATURES GRID
+   7. ANIMATED IDE MOCKUP SIMULATION (.animated-ide-mockup)
+   8. AI TIMELINE BLUEPRINT & FUNCTIONAL FOOTER
+   ========================================================================== */
+
 :root {
   --font-display: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

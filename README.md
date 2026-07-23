@@ -18,6 +18,7 @@ This project was built entirely by orchestrating a two-agent system (**Hermes** 
 | 💬 **Slack Export Logs** | [evidence/slack_export/](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/evidence/slack_export/) | JSON exports of `#sprint-main`, `#agent-coder`, `#agent-log` |
 | 📸 **UI Screenshots** | [evidence/screenshots/](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/evidence/screenshots/) | High-res dark slate & warm cream theme screenshots |
 | 📜 **Agent Work Log** | [agent-log.md](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/agent-log.md) | Unedited execution trace of Hermes & OpenClaw |
+| 🛠️ **Developer & Contributor Guide** | [DEVELOPER_GUIDE.md](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/DEVELOPER_GUIDE.md) | Full codebase map, folder structure & developer extension guide |
 | 🏗️ **System Architecture** | [ARCHITECTURE.md](file:///c:/Users/itska/OneDrive/Desktop/forage2/forge2-qualifier-karan-main/ARCHITECTURE.md) | Agent breakdown, Slack scheme & model routing logic |
 
 ---
