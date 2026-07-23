@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "dev": "npm --prefix frontend run dev",
     "build": "node build.js",
     "vercel-build": "node build.js"
   }

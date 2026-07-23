@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutDashboard, Zap, Users, Shield, ArrowRight, Code, MessageSquare, Terminal, Sun, Moon } from 'lucide-react';
+import AnimatedIdeMockup from '../components/AnimatedIdeMockup';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -89,57 +90,14 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
 
-        {/* IDE Mockup Section */}
+        {/* IDE Mockup Section - Live Animated Simulation */}
         <motion.div 
-          className="ide-mockup-card"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
+          style={{ width: '100%', maxWidth: '1000px', margin: '40px auto 0 auto' }}
         >
-          <div className="ide-header">
-            <div className="ide-dot"></div>
-            <div className="ide-dot"></div>
-            <div className="ide-dot"></div>
-            <div className="ide-title">AgileBoard - Cursor IDE Workspace</div>
-          </div>
-          <div className="ide-body">
-            <div className="ide-sidebar">
-              <div className="ide-sidebar-title">Project Explorer</div>
-              <div className="ide-file active"><Code size={14} /> Board.jsx</div>
-              <div className="ide-file"><Code size={14} /> KanbanController.php</div>
-              <div className="ide-file"><Code size={14} /> index.css</div>
-              <div className="ide-file"><Code size={14} /> README.md</div>
-            </div>
-            <div className="ide-editor">
-              <div className="code-line"><span className="code-comment">// Board.jsx - Render Kanban Lanes</span></div>
-              <div className="code-line"><span className="code-keyword">import</span> React, &#123; useState, useEffect &#125; <span className="code-keyword">from</span> <span className="code-string">'react'</span>;</div>
-              <div className="code-line"><span className="code-keyword">export default function</span> <span className="code-keyword">Board</span>() &#123;</div>
-              <div className="code-line">  <span className="code-keyword">const</span> [columns, setColumns] = useState([]);</div>
-              <div className="code-line">  <span className="code-keyword">return</span> (</div>
-              <div className="code-line">    &lt;<span className="code-keyword">div</span> className=<span className="code-string">"board-canvas"</span>&gt;</div>
-              <div className="code-line">      &#123;columns.map(col =&gt; (&lt;<span className="code-keyword">Swimlane</span> key=&#123;col.id&#125; /&gt;))&#125;</div>
-              <div className="code-line">    &lt;/<span className="code-keyword">div</span>&gt;</div>
-              <div className="code-line">  );</div>
-              <div className="code-line">&#125;</div>
-            </div>
-            <div className="ide-chat-panel">
-              <div className="ide-chat-header"><MessageSquare size={12} style={{ marginRight: '4px' }} /> AI Agent Chat</div>
-              <div className="ide-chat-messages">
-                <div className="chat-message">
-                  <div className="chat-sender">Hermes <span className="timeline-pill timeline-pill-thinking">Thinking</span></div>
-                  <div className="chat-bubble">Scaffolding Kanban schema & Laravel controllers.</div>
-                </div>
-                <div className="chat-message">
-                  <div className="chat-sender">OpenClaw <span className="timeline-pill timeline-pill-edit">Editing</span></div>
-                  <div className="chat-bubble">Running migrations & connecting SQLite store.</div>
-                </div>
-                <div className="chat-message">
-                  <div className="chat-sender">System <span className="timeline-pill timeline-pill-done">Done</span></div>
-                  <div className="chat-bubble">Frontend connected to backend API endpoints.</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AnimatedIdeMockup />
         </motion.div>
 
         {/* Features Section */}
