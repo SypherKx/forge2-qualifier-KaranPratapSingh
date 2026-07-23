@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Zap, Users, Shield, ArrowRight, Code, MessageSquare, Terminal, Sun, Moon, Globe, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Zap, Users, Shield, ArrowRight, Code, MessageSquare, Terminal, Sun, Moon, Globe, ExternalLink, Cpu, Sparkles } from 'lucide-react';
 import AnimatedIdeMockup from '../components/AnimatedIdeMockup';
 
 export default function LandingPage() {
@@ -67,8 +67,8 @@ export default function LandingPage() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div className="hero-badge" variants={itemVariants}>
-            ✨ Agentic Build Qualifier Edition
+          <motion.div className="hero-badge" variants={itemVariants} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Sparkles size={12} style={{ color: 'var(--accent-primary)' }} /> Agentic Build Qualifier Edition
           </motion.div>
           <motion.h1 className="hero-title" variants={itemVariants}>
             Orchestrate your work with <br/>
@@ -239,19 +239,19 @@ export default function LandingPage() {
           {/* Column 3: Tech Architecture */}
           <div className="footer-column">
             <div className="footer-column-title">Tech Stack</div>
-            <span className="footer-link-text">⚡ React 19 + Vite</span>
-            <span className="footer-link-text">🐘 Laravel 11 (PHP 8.3)</span>
-            <span className="footer-link-text">🗄️ SQLite Store & Offline Mode</span>
-            <span className="footer-link-text">🎨 Custom Glassmorphic CSS</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={13} style={{ color: 'var(--accent-primary)' }} /> React 19 + Vite</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Shield size={13} style={{ color: 'var(--text-secondary)' }} /> Laravel 11 (PHP 8.3)</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Code size={13} style={{ color: 'var(--text-secondary)' }} /> SQLite Store & Offline Mode</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><LayoutDashboard size={13} style={{ color: 'var(--text-secondary)' }} /> Custom Glassmorphic CSS</span>
           </div>
 
           {/* Column 4: AI Agents */}
           <div className="footer-column">
             <div className="footer-column-title">Autonomous Agents</div>
-            <span className="footer-link-text">🧠 <strong>Hermes</strong> (Brain & Planner)</span>
-            <span className="footer-link-text">⚡ <strong>OpenClaw</strong> (Autonomous Coder)</span>
-            <span className="footer-link-text">💬 Slack Socket Orchestration</span>
-            <span className="footer-link-text">📊 100% Autonomous Code Gen</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Cpu size={13} style={{ color: 'var(--accent-primary)' }} /> <strong>Hermes</strong> (Brain & Planner)</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Terminal size={13} style={{ color: 'var(--timeline-edit)' }} /> <strong>OpenClaw</strong> (Autonomous Coder)</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><MessageSquare size={13} style={{ color: 'var(--text-secondary)' }} /> Slack Socket Orchestration</span>
+            <span className="footer-link-text" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Sparkles size={13} style={{ color: 'var(--accent-success)' }} /> 100% Autonomous Code Gen</span>
           </div>
 
           {/* Column 5: Submission & Repos */}

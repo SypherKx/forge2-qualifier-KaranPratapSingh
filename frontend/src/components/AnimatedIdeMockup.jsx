@@ -386,7 +386,7 @@ export default function AnimatedIdeMockup() {
                   <div className="chat-sender" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span className={`agent-badge-icon agent-badge-${item.agent.toLowerCase()}`}>
-                        {item.agent === 'Hermes' ? '🧠' : item.agent === 'OpenClaw' ? '⚡' : '⚙️'}
+                        {item.agent === 'Hermes' ? <Cpu size={12} style={{ color: 'var(--accent-primary)' }} /> : item.agent === 'OpenClaw' ? <Terminal size={12} style={{ color: 'var(--timeline-edit)' }} /> : <CheckCircle2 size={12} style={{ color: 'var(--accent-success)' }} />}
                       </span>
                       {item.agent}
                     </span>
