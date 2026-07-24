@@ -77,31 +77,35 @@ export default function ActivityDrawer({
                 No activity logs recorded yet.
               </div>
             ) : (
-              filteredActivities.map(act => (
-                <div
-                  key={act.id}
-                  style={{
-                    background: 'var(--bg-surface)',
-                    border: '1px solid var(--border-color-soft)',
-                    padding: '0.75rem',
-                    borderRadius: 'var(--rounded-md)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '4px'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      {act.type === 'system' ? <Terminal size={12} style={{ color: 'var(--accent-primary)' }} /> : null}
-                      {act.user}
-                    </span>
-                    <span style={{ color: 'var(--text-muted-soft)', fontWeight: 400 }}>{act.time}</span>
+              filteredActivities.map(act => {
+                const isHermes = Boolean(act && act.user && typeof act.user === 'string' && act.user.includes('Hermes'));
+                const isOpenClaw = Boolean(act && act.user && typeof act.user === 'string' && act.user.includes('OpenClaw'));
+                return (
+                  <div
+                    key={act.id}
+                    style={{
+                      background: isHermes ? 'rgba(139, 92, 246, 0.06)' : isOpenClaw ? 'rgba(245, 78, 0, 0.06)' : 'var(--bg-surface)',
+                      border: isHermes ? '1px solid rgba(139, 92, 246, 0.2)' : isOpenClaw ? '1px solid rgba(245, 78, 0, 0.2)' : '1px solid var(--border-color-soft)',
+                      padding: '0.75rem',
+                      borderRadius: 'var(--rounded-md)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: isHermes ? '#8B5CF6' : isOpenClaw ? '#F54E00' : 'var(--text-primary)' }}>
+                        {isHermes ? <span>🧠</span> : isOpenClaw ? <span>🛠️</span> : act.type === 'system' ? <Terminal size={12} style={{ color: 'var(--accent-primary)' }} /> : null}
+                        {act.user}
+                      </span>
+                      <span style={{ color: 'var(--text-muted-soft)', fontWeight: 400 }}>{act.time}</span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                      {act.text}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                    {act.text}
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 

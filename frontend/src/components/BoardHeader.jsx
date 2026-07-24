@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Sun, Moon, Play, Activity, Search, Filter, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Sun, Moon, Play, Terminal, Search, Filter, Trash2, Zap, Sparkles } from 'lucide-react';
 
 /**
  * BoardHeader Component
- * Workspace header bar containing board selection, search/filters, action buttons, and theme toggling.
+ * Two-row workspace header: Row 1 = Brand + Board Actions, Row 2 = Search & Filters
  */
 export default function BoardHeader({
   boards = [],
@@ -13,6 +13,7 @@ export default function BoardHeader({
   onOpenBoardModal,
   onOpenListModal,
   onSeedDemo,
+  onTriggerAgentStep,
   seeding,
   onToggleActivityDrawer,
   searchQuery,
@@ -32,71 +33,171 @@ export default function BoardHeader({
   const navigate = useNavigate();
 
   return (
-    <header className="app-header" style={{ height: 'auto', padding: '0.75rem 2rem', flexWrap: 'wrap', gap: '1rem' }}>
-      {/* Brand & Navigation Left */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button
-          className="btn btn-secondary btn-icon"
-          onClick={() => navigate('/')}
-          title="Back to Landing Page"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div className="brand">
-          <span className="brand-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>AgileBoard</span>
-          <span className="brand-tag">Workspace</span>
+    <header
+      className="app-header"
+      style={{
+        height: 'auto',
+        padding: '0',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        gap: '0'
+      }}
+    >
+      {/* ─── ROW 1: Brand + Board Selector + Primary Actions ─── */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0.6rem 1.5rem',
+          gap: '0.75rem',
+          borderBottom: '1px solid var(--border-color-soft)',
+          minHeight: '48px',
+          flexWrap: 'wrap'
+        }}
+      >
+        {/* Left: Back + Brand + Agent Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+          <button
+            className="btn btn-secondary btn-icon"
+            onClick={() => navigate('/')}
+            title="Back to Landing Page"
+            style={{ padding: '6px' }}
+          >
+            <ArrowLeft size={15} />
+          </button>
+          <span className="brand-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer', fontSize: '1.1rem', whiteSpace: 'nowrap' }}>
+            AgileBoard
+          </span>
+          <span className="brand-tag" style={{ fontSize: '0.6rem' }}>Workspace</span>
+
+          {/* Agent Sync Badge */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '3px 9px',
+              borderRadius: '14px',
+              background: 'rgba(139, 92, 246, 0.1)',
+              border: '1px solid rgba(139, 92, 246, 0.25)',
+              fontSize: '10px',
+              fontWeight: '600',
+              color: '#8B5CF6',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}
+          >
+            <span
+              style={{
+                width: '6px', height: '6px', borderRadius: '50%',
+                backgroundColor: '#10B981', display: 'inline-block',
+                boxShadow: '0 0 6px #10B981', animation: 'pulse 1.5s infinite'
+              }}
+            />
+            <Sparkles size={10} />
+            <span>Hermes & OpenClaw Active</span>
+          </div>
+        </div>
+
+        {/* Center: Board Selector + Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <select
+            className="select-dropdown"
+            value={selectedBoardId || ''}
+            onChange={(e) => onSelectBoard(parseInt(e.target.value))}
+            style={{ fontSize: '12px', height: '32px', minWidth: '120px' }}
+          >
+            {boards.map(b => (
+              <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+          </select>
+
+          <button className="btn btn-secondary" onClick={onOpenBoardModal} style={{ fontSize: '11px', padding: '5px 10px', whiteSpace: 'nowrap' }}>
+            <Plus size={12} /> New Board
+          </button>
+
+          <button className="btn btn-secondary" onClick={onOpenListModal} style={{ fontSize: '11px', padding: '5px 10px', whiteSpace: 'nowrap' }}>
+            <Plus size={12} /> Add Column
+          </button>
+
+          <button
+            className="btn btn-primary"
+            onClick={onSeedDemo}
+            disabled={seeding}
+            style={{ fontSize: '11px', padding: '5px 10px', whiteSpace: 'nowrap' }}
+          >
+            <Play size={12} /> {seeding ? 'Seeding...' : 'Seed Demo Board'}
+          </button>
+
+          {onTriggerAgentStep && (
+            <button
+              className="btn btn-secondary"
+              onClick={onTriggerAgentStep}
+              title="Run next agent step"
+              style={{
+                fontSize: '11px', padding: '5px 10px',
+                borderColor: 'rgba(245, 78, 0, 0.4)',
+                color: 'var(--accent-primary)',
+                background: 'rgba(245, 78, 0, 0.06)',
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <Zap size={12} /> Run Agent Step
+            </button>
+          )}
+
+          {selectedBoardId && (
+            <button
+              className="btn btn-danger btn-icon"
+              onClick={() => onDeleteBoard(selectedBoardId)}
+              title="Delete Current Board"
+              style={{ padding: '5px 7px' }}
+            >
+              <Trash2 size={13} />
+            </button>
+          )}
+        </div>
+
+        {/* Right: Activity + Theme Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0, marginLeft: 'auto' }}>
+          <button
+            className="btn btn-secondary btn-icon"
+            onClick={onToggleActivityDrawer}
+            title="Activity Log"
+            style={{ padding: '6px' }}
+          >
+            <Terminal size={14} style={{ color: 'var(--accent-primary)' }} />
+          </button>
+          <button
+            className="btn btn-secondary btn-icon"
+            onClick={() => setDarkMode(!darkMode)}
+            title="Toggle theme"
+            style={{ padding: '6px' }}
+          >
+            {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
         </div>
       </div>
 
-      {/* Board Selector & Main Actions */}
-      <div className="board-picker" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-        <select
-          className="select-dropdown"
-          value={selectedBoardId || ''}
-          onChange={(e) => onSelectBoard(parseInt(e.target.value))}
-        >
-          {boards.map(b => (
-            <option key={b.id} value={b.id}>{b.name}</option>
-          ))}
-        </select>
-
-        <button className="btn btn-secondary" onClick={onOpenBoardModal} title="New Board">
-          <Plus size={14} /> New Board
-        </button>
-
-        <button className="btn btn-secondary" onClick={onOpenListModal} title="Add Swimlane Column">
-          <Plus size={14} /> Add Column
-        </button>
-
-        <button
-          className="btn btn-primary"
-          onClick={onSeedDemo}
-          disabled={seeding}
-          title="Seed Demo Kanban Board"
-        >
-          <Play size={14} /> {seeding ? 'Seeding...' : 'Seed Demo Board'}
-        </button>
-
-        {selectedBoardId && (
-          <button
-            className="btn btn-danger btn-icon"
-            onClick={() => onDeleteBoard(selectedBoardId)}
-            title="Delete Current Board"
-          >
-            <Trash2 size={14} />
-          </button>
-        )}
-      </div>
-
-      {/* Search & Filter Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+      {/* ─── ROW 2: Search & Filters ─── */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0.45rem 1.5rem',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          minHeight: '38px'
+        }}
+      >
         {/* Search Input */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <Search size={14} style={{ position: 'absolute', left: '10px', color: 'var(--text-muted)' }} />
+          <Search size={13} style={{ position: 'absolute', left: '9px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
           <input
             type="text"
             className="form-input"
-            style={{ paddingLeft: '30px', paddingRight: '10px', height: '34px', fontSize: '12px', width: '160px' }}
+            style={{ paddingLeft: '28px', paddingRight: '8px', height: '30px', fontSize: '11px', width: '150px' }}
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -106,7 +207,7 @@ export default function BoardHeader({
         {/* Tag Filter */}
         <select
           className="form-select"
-          style={{ height: '34px', fontSize: '12px', padding: '0 8px' }}
+          style={{ height: '30px', fontSize: '11px', padding: '0 6px' }}
           value={selectedTagFilter}
           onChange={(e) => setSelectedTagFilter(e.target.value)}
         >
@@ -119,7 +220,7 @@ export default function BoardHeader({
         {/* Member Filter */}
         <select
           className="form-select"
-          style={{ height: '34px', fontSize: '12px', padding: '0 8px' }}
+          style={{ height: '30px', fontSize: '11px', padding: '0 6px' }}
           value={selectedMemberFilter}
           onChange={(e) => setSelectedMemberFilter(e.target.value)}
         >
@@ -129,34 +230,13 @@ export default function BoardHeader({
           ))}
         </select>
 
-        {/* Overdue Filter Toggle */}
+        {/* Overdue Filter */}
         <button
           className={`step-tab-btn ${filterOverdueOnly ? 'active' : ''}`}
-          style={{ height: '34px', padding: '0 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
+          style={{ height: '30px', padding: '0 8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
           onClick={() => setFilterOverdueOnly(!filterOverdueOnly)}
         >
-          <Filter size={12} /> Overdue
-        </button>
-      </div>
-
-      {/* Header Actions Right */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
-        <button
-          className="btn btn-secondary btn-icon"
-          onClick={onToggleActivityDrawer}
-          title="Activity Log Drawer"
-          style={{ padding: '8px' }}
-        >
-          <Activity size={16} style={{ color: 'var(--accent-primary)' }} />
-        </button>
-
-        <button
-          className="btn btn-secondary btn-icon"
-          onClick={() => setDarkMode(!darkMode)}
-          title="Toggle theme"
-          style={{ padding: '8px' }}
-        >
-          {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          <Filter size={11} /> Overdue
         </button>
       </div>
     </header>

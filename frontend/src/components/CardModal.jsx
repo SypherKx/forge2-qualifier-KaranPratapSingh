@@ -155,9 +155,9 @@ export default function CardModal({
                       className="member-avatar"
                       style={{ backgroundColor: m.avatar_color || '#4F46E5', width: '18px', height: '18px', fontSize: '10px' }}
                     >
-                      {m.name.charAt(0)}
+                      {m && m.name ? m.name.charAt(0) : '?'}
                     </div>
-                    <span>{m.name}</span>
+                    <span>{m ? m.name : 'Unknown'}</span>
                   </div>
                 );
               })}

@@ -29,23 +29,31 @@ export default function KanbanColumn({
   onAddCardClick
 }) {
   const cards = list.cards || [];
+  const getColumnIcon = (name = '') => {
+    if (name.includes('To Do') || name.includes('Queue')) return '📋';
+    if (name.includes('Progress') || name.includes('Executing')) return '⚡';
+    if (name.includes('Review') || name.includes('Audit')) return '🔍';
+    if (name.includes('Done') || name.includes('Shipped')) return '✅';
+    return '📌';
+  };
 
   return (
     <div
       className="board-list"
       onDragOver={onDragOver}
-      onDrop={(e) => onDrop(e, list.id)}
+      onDrop={(e) => onDrop && onDrop(e, list.id)}
     >
       {/* Swimlane Column Header */}
       <div className="list-header">
-        <div className="list-title-area">
+        <div className="list-title-area" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span>{getColumnIcon(list.name)}</span>
           <span className="list-title">{list.name}</span>
           <span className="card-count-badge">{cards.length}</span>
         </div>
         <button
           className="btn btn-secondary btn-icon"
           style={{ padding: '4px', border: 'none' }}
-          onClick={() => onDeleteList(list.id)}
+          onClick={() => onDeleteList && onDeleteList(list.id)}
           title="Delete Column"
         >
           <Trash2 size={14} style={{ color: 'var(--text-muted)' }} />

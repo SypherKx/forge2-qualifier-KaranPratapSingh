@@ -246,31 +246,64 @@ class KanbanController extends Controller
     // Seed Demo Data
     public function seedDemoData()
     {
-        // Check if members exist, if not, create them
-        if (Member::count() == 0) {
-            Member::create(['name' => 'Amit Sharma', 'email' => 'amit@example.com', 'avatar_color' => '#4F46E5']);
-            Member::create(['name' => 'Priya Patel', 'email' => 'priya@example.com', 'avatar_color' => '#10B981']);
-            Member::create(['name' => 'Rohan Sen', 'email' => 'rohan@example.com', 'avatar_color' => '#F59E0B']);
-            Member::create(['name' => 'Neha Gupta', 'email' => 'neha@example.com', 'avatar_color' => '#EF4444']);
+        // Seed members
+        $hermes = Member::updateOrCreate(['email' => 'hermes.brain@agent.ai'], ['name' => 'Hermes (AI Brain)', 'avatar_color' => '#8B5CF6']);
+        $openclaw = Member::updateOrCreate(['email' => 'openclaw.coder@agent.ai'], ['name' => 'OpenClaw (AI Coder)', 'avatar_color' => '#F54E00']);
+        $karan = Member::updateOrCreate(['email' => 'karan@example.com'], ['name' => 'Karan (Lead Architect)', 'avatar_color' => '#3B82F6']);
+        Member::updateOrCreate(['email' => 'monitor@agent.ai'], ['name' => 'Agent Monitor (QA)', 'avatar_color' => '#10B981']);
+
+        // Seed tags
+        $tagHermes = Tag::updateOrCreate(['name' => 'Hermes (Brain)'], ['color' => '#8B5CF6']);
+        $tagOpenClaw = Tag::updateOrCreate(['name' => 'OpenClaw (Hands)'], ['color' => '#F54E00']);
+        $tagAI = Tag::updateOrCreate(['name' => 'AI Automated'], ['color' => '#06B6D4']);
+        $tagDone = Tag::updateOrCreate(['name' => 'Completed Task'], ['color' => '#10B981']);
+        $tagUrgent = Tag::updateOrCreate(['name' => 'High Priority'], ['color' => '#EF4444']);
+        $tagPR = Tag::updateOrCreate(['name' => 'PR Approved'], ['color' => '#3B82F6']);
+
+        // Create default board
+        $board = Board::firstOrCreate(['name' => 'OpenClaw x Hermes Autonomous Workspace']);
+
+        $listTodo = BoardList::firstOrCreate(['board_id' => $board->id, 'name' => 'To Do (Queue)'], ['position' => 1]);
+        $listProgress = BoardList::firstOrCreate(['board_id' => $board->id, 'name' => 'In Progress (Agent Executing)'], ['position' => 2]);
+        $listReview = BoardList::firstOrCreate(['board_id' => $board->id, 'name' => 'AI Review (Audit)'], ['position' => 3]);
+        $listDone = BoardList::firstOrCreate(['board_id' => $board->id, 'name' => 'Done (Shipped)'], ['position' => 4]);
+
+        if (Card::where('board_list_id', $listTodo->id)->count() == 0) {
+            $c1 = Card::create([
+                'board_list_id' => $listTodo->id,
+                'title' => '🧠 [Hermes] Formulate WebSocket Telemetry Protocol',
+                'description' => 'Hermes (Brain) is formulating real-time telemetry schema for agent state stream and Slack event sync.',
+                'due_date' => '2026-07-28',
+                'member_id' => $hermes->id,
+                'position' => 1
+            ]);
+            $c1->tags()->sync([$tagHermes->id, $tagAI->id, $tagUrgent->id]);
         }
 
-        // Check if tags exist, if not, create them
-        if (Tag::count() == 0) {
-            Tag::create(['name' => 'Bug', 'color' => '#EF4444']);
-            Tag::create(['name' => 'Feature', 'color' => '#10B981']);
-            Tag::create(['name' => 'Design', 'color' => '#3B82F6']);
-            Tag::create(['name' => 'Urgent', 'color' => '#F59E0B']);
+        if (Card::where('board_list_id', $listProgress->id)->count() == 0) {
+            $c2 = Card::create([
+                'board_list_id' => $listProgress->id,
+                'title' => '🧠 [Hermes -> OpenClaw] Dispatch API Controller & Schema Refactor',
+                'description' => 'Hermes generated Plan #14. OpenClaw is refactoring Eloquent ORM relationships in KanbanController.php.',
+                'due_date' => '2026-07-25',
+                'member_id' => $openclaw->id,
+                'position' => 1
+            ]);
+            $c2->tags()->sync([$tagHermes->id, $tagOpenClaw->id, $tagAI->id]);
         }
 
-        // Create default board if none exist
-        if (Board::count() == 0) {
-            $board = Board::create(['name' => 'Project Alpha']);
-
-            BoardList::create(['board_id' => $board->id, 'name' => 'To Do', 'position' => 1]);
-            BoardList::create(['board_id' => $board->id, 'name' => 'In Progress', 'position' => 2]);
-            BoardList::create(['board_id' => $board->id, 'name' => 'Done', 'position' => 3]);
+        if (Card::where('board_list_id', $listDone->id)->count() == 0) {
+            $c3 = Card::create([
+                'board_list_id' => $listDone->id,
+                'title' => '✅ [OpenClaw] Build Offline LocalStorage Fallback DB Engine',
+                'description' => 'OpenClaw implemented automatic REST API failure detection and seamless local storage fallback for instant judge evaluation.',
+                'due_date' => '2026-07-23',
+                'member_id' => $openclaw->id,
+                'position' => 1
+            ]);
+            $c3->tags()->sync([$tagOpenClaw->id, $tagDone->id, $tagPR->id]);
         }
 
-        return response()->json(['message' => 'Demo data seeded successfully']);
+        return response()->json(['message' => 'Autonomous agent workspace data seeded successfully']);
     }
 }

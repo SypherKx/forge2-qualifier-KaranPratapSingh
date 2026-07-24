@@ -32,31 +32,59 @@ export default function KanbanCard({
   const cardTagIds = card.tags ? card.tags.map(t => typeof t === 'object' ? t.id : t) : [];
   const assignedTags = tags.filter(t => cardTagIds.includes(t.id));
 
+  // Check for Agent assignments safely
+  const isHermesAssigned = (Array.isArray(assignedMembers) && assignedMembers.some(m => m && m.name && typeof m.name === 'string' && m.name.includes('Hermes'))) || (card && card.title && typeof card.title === 'string' && card.title.includes('Hermes'));
+  const isOpenClawAssigned = (Array.isArray(assignedMembers) && assignedMembers.some(m => m && m.name && typeof m.name === 'string' && m.name.includes('OpenClaw'))) || (card && card.title && typeof card.title === 'string' && card.title.includes('OpenClaw'));
+
   return (
     <div
       className={`kanban-card ${isOverdue ? 'overdue' : ''}`}
       draggable
-      onDragStart={(e) => onDragStart(e, card.id)}
-      onClick={() => onCardClick(card)}
+      onDragStart={(e) => onDragStart && onDragStart(e, card.id)}
+      onClick={() => onCardClick && onCardClick(card)}
     >
-      {/* Tag Badges */}
-      {assignedTags.length > 0 && (
-        <div className="card-tags">
-          {assignedTags.map(tag => (
-            <span
-              key={tag.id}
-              className="tag-badge"
-              style={{
-                backgroundColor: tag.color + '20',
-                color: tag.color,
-                borderColor: tag.color + '40'
-              }}
-            >
-              {tag.name}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* Agent Badges & Tag Badges */}
+      <div className="card-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
+        {isHermesAssigned && (
+          <span
+            className="tag-badge agent-pill-hermes"
+            style={{
+              backgroundColor: 'rgba(139, 92, 246, 0.15)',
+              color: '#8B5CF6',
+              borderColor: 'rgba(139, 92, 246, 0.4)',
+              fontWeight: 600
+            }}
+          >
+            🧠 Hermes (Brain)
+          </span>
+        )}
+        {isOpenClawAssigned && (
+          <span
+            className="tag-badge agent-pill-openclaw"
+            style={{
+              backgroundColor: 'rgba(245, 78, 0, 0.15)',
+              color: '#F54E00',
+              borderColor: 'rgba(245, 78, 0, 0.4)',
+              fontWeight: 600
+            }}
+          >
+            🛠️ OpenClaw (Hands)
+          </span>
+        )}
+        {assignedTags.map(tag => (
+          <span
+            key={tag.id}
+            className="tag-badge"
+            style={{
+              backgroundColor: tag.color + '20',
+              color: tag.color,
+              borderColor: tag.color + '40'
+            }}
+          >
+            {tag.name}
+          </span>
+        ))}
+      </div>
 
       {/* Title */}
       <div className="card-title">{card.title}</div>
